@@ -1,14 +1,17 @@
 import { createRoot } from 'react-dom/client'
+import { Provider } from "react-redux";
+import { HelmetProvider } from 'react-helmet-async';
 import './index.css'
 import App from './App.tsx'
-import { Provider } from "react-redux";
 import { store } from "./store.ts";
 import { AlertProvider } from './components/Common/Alert.tsx';
 
 createRoot(document.getElementById('root')!).render(
-  <Provider store={store}>
-    <AlertProvider>
-      <App />
-    </AlertProvider>
-  </Provider>,
+  <HelmetProvider>
+    <Provider store={store}>
+      <AlertProvider>
+        <App />
+      </AlertProvider>
+    </Provider>
+  </HelmetProvider>,
 )

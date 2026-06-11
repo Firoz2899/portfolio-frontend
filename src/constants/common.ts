@@ -1,7 +1,8 @@
 export const localStorageKeys = {
     accessToken: "Access_Token",
     refreshToken: "Refresh_Token",
-    userData: "User_Data"
+    userData: "User_Data",
+    themeMode: "theme-mode"
 } as const
 
 export const Regex = {

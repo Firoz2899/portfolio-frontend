@@ -1,7 +1,6 @@
 import * as React from "react";
 
-interface LabelProps
-  extends React.LabelHTMLAttributes<HTMLLabelElement> {}
+type LabelProps = React.LabelHTMLAttributes<HTMLLabelElement>;
 
 export const Label = ({
   children,

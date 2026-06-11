@@ -12,6 +12,12 @@ const preloadProps = (component: LoadableComponent<unknown>) => ({
 
 export const AppRoutes : AppRoute[] = [
   {
+    name: RouteNames.public.Dashboard,
+    path: "/",
+    ...preloadProps(loadable(() => import("@/pages/public/Dashboard"))),
+    roles: []
+  },
+  {
     name: RouteNames.auth.SignIn,
     path: "/SignIn",
     ...preloadProps(loadable(() => import("@/pages/auth/SignIn"))),

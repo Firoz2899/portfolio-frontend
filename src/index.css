@@ -13,6 +13,19 @@
         transform: translate(0px, 0px) scale(1);
     }
 }
+@layer components {
+  .theme-page-light {
+    @apply bg-gradient-to-br from-gray-50 to-white text-gray-900;
+  }
+
+  .theme-page-dark {
+    @apply bg-gradient-to-br from-gray-900 to-gray-800 text-gray-100;
+  }
+
+  .theme-page-base {
+    @apply min-h-screen transition-colors duration-500;
+  }
+}
 .animate-blob {
     animation: blob 7s infinite;
 }

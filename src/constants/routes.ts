@@ -1,5 +1,6 @@
 export const RouteNames = {
     public: {
+        Dashboard: "Dashboard",
         NotFound: "NotFound"
     },
     auth: {
