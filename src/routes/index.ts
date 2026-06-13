@@ -1,9 +1,10 @@
-import { RouteNames } from "@/constants";
+import { Roles, RouteNames } from "@/constants";
 import type { AppRoute } from "@/types/common.types";
 import loadable, { type LoadableComponent } from "@loadable/component";
 
 const preloadProps = (component: LoadableComponent<unknown>) => ({
     component: component,
+    preload: component.preload,
     preloadProps: {
         onMouseEnter: component.preload,
         onMouseOver: component.preload
@@ -34,6 +35,12 @@ export const AppRoutes : AppRoute[] = [
     path: "/Forgot-Password",
     ...preloadProps(loadable(() => import("@/pages/auth/ForgotPassword"))),
     roles: []
+  },
+  {
+    name: RouteNames.profile.Edit,
+    path: "/Edit-Profile",
+    ...preloadProps(loadable(() => import("@/pages/private/EditProfile"))),
+    roles: [Roles.USER, Roles.SUPERADMIN],
   },
   {
     name: RouteNames.public.NotFound,

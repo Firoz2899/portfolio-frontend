@@ -11,7 +11,7 @@ import {
 } from 'react-icons/fa';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { useAlert } from "../../../components/Common/Alert";
+import { useAlert } from "../../Common/Alert";
 import { useDispatch } from "react-redux";
 // import { setRefresh } from '../../../States/Slice/LoadingSlice';
 

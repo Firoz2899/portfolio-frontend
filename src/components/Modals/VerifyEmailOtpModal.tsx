@@ -1,11 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import {
-    useVerifyEmailMutation,
-    useResendEmailOtpMutation,
-    executeMutation,
-} from "@/services";
+import { authApiHooks, executeMutation } from "@/services";
 
 import { useAlert, OtpInput } from "@/components/Common";
 import { RouteNames } from "@/constants";
@@ -26,8 +22,8 @@ export function VerifyOtpModal({
     const navigate = useNavigate();
     const [otp, setOtp] = useState("");
     const [timer, setTimer] = useState(60);
-    const [verifyEmailApi, verifyState] = useVerifyEmailMutation();
-    const [resendOtpApi, resendState] = useResendEmailOtpMutation();
+    const [verifyEmailApi, verifyState] = authApiHooks.useVerifyEmailMutation();
+    const [resendOtpApi, resendState] = authApiHooks.useResendEmailOtpMutation();
     const { showAlert } = useAlert();
 
     useEffect(() => {

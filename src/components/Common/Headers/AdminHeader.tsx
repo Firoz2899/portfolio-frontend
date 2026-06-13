@@ -1,66 +1,39 @@
 
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import type { MouseEvent } from "react";
 import { FaSearch, FaArrowRight, FaChevronDown, FaUser, FaCog, FaPalette, FaSignOutAlt } from 'react-icons/fa';
-import { useDispatch } from 'react-redux';
-// import { setUser } from '../States/Slice/UserSlice';
-import { useAlert } from './Alert';
+import { useAlert } from '@/components/Common';
 import { useNavigate } from 'react-router-dom';
 import { getRoute } from '@/utils/route.helpers';
 import { RouteNames } from '@/constants';
+import { authApiHooks, executeMutation } from '@/services';
+import { useAppSelector, useAppActions } from '@/hooks';
 
 
-export function AdminHeader ({
-  activeSection,
-  darkMode,
-  user,
-  defaultProfileImage,
-  headerSearch,
-  setHeaderSearch
-}: any) {
-
-  const dispatch = useDispatch();
+export function AdminHeader () {
   const navigate = useNavigate();
   const { showAlert } = useAlert();
+  const [logoutApi] = authApiHooks.useLogoutMutation()
+  const dashboardRoute = getRoute(RouteNames.public.Dashboard);
+  const {activeTab, headerSearch} = useAppSelector(x => x.app)
+  const {user} = useAppSelector(x => x.auth)
+  const {setHeaderSearch} = useAppActions()
 
-  const handleLogout = async (e) => {
+  
+  const defaultProfileImage = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80";
+
+  const handleLogout = async (e: MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
+    const res = await executeMutation(logoutApi().unwrap()); 
 
-    const apiBaseUrl = import.meta.env.VITE_API_URL;
-    const logoutEndpoint = import.meta.env.VITE_LOGOUT_API;
-
-    try {
-      const res = await fetch(`${apiBaseUrl}${logoutEndpoint}`, {
-        method: 'GET',
-        credentials: 'include', 
-      });
-
-      const jsonResponse = await res.json().catch(() => ({
-        message: "Unexpected error occurred",
-      }));
-
-      if (!res.ok) {
-        showAlert({
-          type: "error",
-          message: jsonResponse.message || "Logout failed",
-        });
-        return;
-      }
-
-      showAlert({
-        type: "success",
-        message: "Logged out successfully",
-      });
-
-      // dispatch(setUser(null));
-      navigate(getRoute(RouteNames.auth.SignIn)?.path || "");
-
-    } catch (error) {
-      console.error("Logout error:", error);
-      showAlert({
-        type: "error",
-        message: "Network error. Please try again.",
-      });
+    showAlert({
+      type: res.IsSuccess ? "success" : "error",
+      message: res.Message,
+    });
+    
+    if(res.IsSuccess){
+      setTimeout(() => {
+        navigate(dashboardRoute?.path || "");
+      }, 1500);
     }
   };
 
@@ -78,12 +51,12 @@ export function AdminHeader ({
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center p-4 gap-4">
           <div>
             <h1 className="text-xl font-bold text-gray-800 dark:text-white capitalize">
-              {activeSection === 'dashboard' ? 'Dashboard' : activeSection}
+              {activeTab === 'dashboard' ? 'Dashboard' : activeTab}
             </h1>
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              {activeSection === 'dashboard'
+              {activeTab === 'dashboard'
                 ? 'Overview of your profile and activity'
-                : `Manage your ${activeSection} section`}
+                : `Manage your ${activeTab} section`}
             </p>
           </div>
 
@@ -97,7 +70,7 @@ export function AdminHeader ({
               className="w-full px-4 py-2 bg-white dark:bg-gray-700 text-gray-800 dark:text-white rounded-full border border-gray-200 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-teal-400 focus:border-transparent pl-10"
             />
             <FaSearch className="absolute left-3 top-2.5 text-gray-500 dark:text-gray-400" />
-            <button className="absolute right-2 top-1.5 p-1 bg-gradient-to-r from-teal-400 to-cyan-500 text-white rounded-full w-7 h-7 flex items-center justify-center">
+            <button aria-label='search' className="absolute right-2 top-1.5 p-1 bg-gradient-to-r from-teal-400 to-cyan-500 text-white rounded-full w-7 h-7 flex items-center justify-center">
               <FaArrowRight className="text-xs" />
             </button>
           </div>
@@ -110,9 +83,7 @@ export function AdminHeader ({
                 <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white dark:border-gray-800 shadow">
                   <img
                     src={
-                      user.ProfileImage
-                        ? `${import.meta.env.VITE_API_URL}${user.ProfileImage}`
-                        : defaultProfileImage
+                      defaultProfileImage
                     }
                     alt="User Profile"
                     className="w-full h-full object-cover"
@@ -131,18 +102,14 @@ export function AdminHeader ({
                   <div className="flex items-center">
                     <div className="w-10 h-10 rounded-full overflow-hidden mr-3">
                       <img
-                        src={
-                          user.ProfileImage
-                            ? `${import.meta.env.VITE_API_URL}${user.ProfileImage}`
-                            : defaultProfileImage
-                        }
+                        src={defaultProfileImage}
                         alt="User Profile"
                         className="w-full h-full object-cover"
                       />
                     </div>
                     <div>
                       <p className="text-gray-800 dark:text-white font-medium">{`${user?.FirstName} ${user?.LastName}`}</p>
-                      <p className="text-gray-600 dark:text-gray-400 text-sm">{user.Roles}</p>
+                      <p className="text-gray-600 dark:text-gray-400 text-sm">{user?.Role?.join(', ')}</p>
                     </div>
                   </div>
                 </div>
@@ -166,7 +133,7 @@ export function AdminHeader ({
                     </div>
                   </button>
                   <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
-                  <button onClick={handleLogout} className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
+                  <button onClick={handleLogout} {...dashboardRoute.preloadProps} className="block w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                     <div className="flex items-center">
                       <FaSignOutAlt className="mr-3 text-gray-500" />
                       <span>Logout</span>

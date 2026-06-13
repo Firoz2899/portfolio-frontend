@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from "react-hook-form";
 import { EnvelopeIcon, LockClosedIcon, EyeSlashIcon, EyeIcon } from "@heroicons/react/24/solid";
 import { Form, FormCheckbox, FormControl, FormField, FormItem, FormLabel, FormMessage, useAlert } from "@/components/Common";
@@ -6,16 +6,26 @@ import { Link, useNavigate } from "react-router-dom"
 import { zodResolver } from '@hookform/resolvers/zod';
 import { signInSchema, type SignInFormData } from '@/schemas';
 import { localStorageKeys, RouteNames } from '@/constants';
-import { useSignInMutation, executeMutation } from '@/services';
+import { authApiHooks, executeMutation } from '@/services';
 import { getRoute } from '@/utils/route.helpers';
-// import { auth, googleProvider, signInWithPopup } from "../lib/Firebase";
+import { useAppSelector } from '@/hooks';
+import { Helmet } from 'react-helmet-async';
 
 export default function SignIn() {
 
-  const [signinApi] = useSignInMutation()
+  const [signinApi] = authApiHooks.useSignInMutation()
   const [showPassword, setShowPassword] = useState(false);
+  const {isAuthenticated} = useAppSelector(x => x.auth)
   const { showAlert } = useAlert();
   const navigate = useNavigate();
+  const editProfileRoute = getRoute(RouteNames.profile.Edit)
+
+  useEffect(() => {
+    if(isAuthenticated){
+      editProfileRoute.preload();
+      navigate(editProfileRoute.path ?? "", {replace: true})
+    }
+  }, [isAuthenticated])
 
   const form = useForm<SignInFormData>({
     resolver: zodResolver(signInSchema),
@@ -30,6 +40,7 @@ export default function SignIn() {
   const {handleSubmit, control, formState} = form
 
   const onSubmit = handleSubmit(async (data) => {
+    editProfileRoute.preload();
     const res = await executeMutation(signinApi(data).unwrap())
     showAlert({
       type: res.IsSuccess ? "success" : "error",
@@ -43,9 +54,8 @@ export default function SignIn() {
       localStorage.setItem(localStorageKeys.accessToken, res.Data.tokens.accessToken)
       localStorage.setItem(localStorageKeys.userData, JSON.stringify(res.Data.user))
       
-      const navigateTo = getRoute(RouteNames.public.NotFound)?.path ?? "";
       setTimeout(() => {
-        navigate(navigateTo, {replace: true})
+        navigate(editProfileRoute.path ?? "", {replace: true})
       }, 1500)
     }
   });
@@ -64,6 +74,11 @@ export default function SignIn() {
 
           {/* Wave pattern */}
           <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-blue-800/20 to-transparent"></div>
+
+          <Helmet>
+            <title>Touch-Yatra | SignIn</title>
+            <meta name="description" content="Signin to profile" />
+          </Helmet>
 
           <div className="relative z-10">
             <div className="flex items-center space-x-3 mb-12">

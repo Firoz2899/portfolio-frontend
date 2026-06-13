@@ -1,27 +1,39 @@
-import { useState, type InputHTMLAttributes, type ComponentType } from "react";
+import { useState, type InputHTMLAttributes, type ComponentType, useEffect } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { UserIcon, EnvelopeIcon, TagIcon, LockClosedIcon, } from "@heroicons/react/24/solid";
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {zodResolver} from '@hookform/resolvers/zod'
 import { signUpSchema, type SignUpFormData } from "@/schemas";
 import { Form, FormCheckbox, FormControl, FormField, FormItem, FormLabel, FormMessage, useAlert } from "@/components/Common";
 import { cn } from "@/utils";
-import { useSignupMutation, useValidateSlugMutation, executeMutation } from "@/services";
-import { useDebounceTrigger } from "@/hooks";
+import { authApiHooks, slugApiHooks, executeMutation } from "@/services";
+import { useAppSelector, useDebounceTrigger } from "@/hooks";
 import { ReservedSlugTypes, RouteNames } from "@/constants";
 import { VerifyOtpModal } from "@/components/Modals/VerifyEmailOtpModal";
 import { getRoute } from "@/utils/route.helpers";
+import { Helmet } from "react-helmet-async";
 
 export default function SignUp() {
 
+  const navigate = useNavigate()
   const {showAlert} = useAlert()
+  const {isAuthenticated} = useAppSelector(x => x.auth)
   const [showPassword, setShowPassword] = useState<boolean>(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState<boolean>(false)
-  const [validateSlugApi] = useValidateSlugMutation()
-  const [signupApi] = useSignupMutation()
+  const [validateSlugApi] = slugApiHooks.useValidateSlugMutation()
+  const [signupApi] = authApiHooks.useSignupMutation()
   const [showOtpModal, setShowOtpModal] = useState<boolean>(false);
   const [email, setEmail] = useState<string>("");
+
+  const editProfileRoute = getRoute(RouteNames.profile.Edit)
+
+  useEffect(() => {
+    if(isAuthenticated){
+      editProfileRoute.preload();
+      navigate(editProfileRoute.path ?? "", {replace: true})
+    }
+  }, [isAuthenticated])
 
   const form = useForm<SignUpFormData>({
     resolver: zodResolver(signUpSchema),
@@ -45,6 +57,9 @@ export default function SignUp() {
   });
 
   useDebounceTrigger(async () => {
+    if(!formState.isDirty){
+      return;
+    }
     const isValid = await trigger("ProfileSlug");
 
     if (!isValid) {
@@ -96,6 +111,11 @@ export default function SignUp() {
             <div className="absolute -top-24 -right-24 w-48 h-48 bg-cyan-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
             <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-teal-500 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
             <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-blue-400 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-pulse"></div>
+
+          <Helmet>
+            <title>Touch-Yatra | SignUp</title>
+            <meta name="description" content="Signin to profile" />
+          </Helmet>
 
             <div className="relative z-10">
               <div className="flex items-center space-x-3 mb-12">

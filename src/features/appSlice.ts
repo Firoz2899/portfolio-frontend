@@ -1,19 +1,25 @@
+import { localStorageKeys } from "@/constants";
 import {
   createSlice,
   type PayloadAction,
 } from "@reduxjs/toolkit";
 
+type ThemeMode = "light" | "dark";
+type ViewModeType = "grid" | "list";
+
 interface AppState {
+  themeMode: ThemeMode | null;
   routeName: string;
   searchQuery: string;
   headerSearch: string;
-  viewMode: "grid" | "list";
+  viewMode: ViewModeType;
   activeTab: string;
   mobileMenuOpen: boolean;
   sidebarOpen: boolean;
 }
 
 const initialState: AppState = {
+  themeMode: localStorage.getItem(localStorageKeys.themeMode) as ThemeMode || null,
   routeName: "",
   searchQuery: "",
   headerSearch: "",
@@ -29,6 +35,9 @@ const appSlice = createSlice({
   reducers: {
     setRouteName(state, action: PayloadAction<string>) {
       state.routeName = action.payload;
+    },
+    setThemeMode(state, action: PayloadAction<ThemeMode | null>){
+      state.themeMode = action.payload;
     },
     setSearchQuery(state, action: PayloadAction<string>) {
       state.searchQuery = action.payload;
@@ -60,17 +69,6 @@ const appSlice = createSlice({
   },
 });
 
-export const {
-  setRouteName,
-  setSearchQuery,
-  setHeaderSearch,
-  toggleViewMode,
-  setViewMode,
-  setActiveTab,
-  toggleMobileMenu,
-  setMobileMenu,
-  toggleSidebar,
-  setSidebarOpen
-} = appSlice.actions;
+export const appActions = appSlice.actions;
 
-export default appSlice.reducer;
+export const appReducer = appSlice.reducer;
