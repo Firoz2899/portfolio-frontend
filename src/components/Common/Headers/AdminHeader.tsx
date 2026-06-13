@@ -80,7 +80,7 @@ export function AdminHeader () {
             {/* Profile Dropdown */}
             <div className="relative group">
               <button className="flex items-center space-x-2 p-2 rounded-xl bg-gradient-to-r from-teal-50 to-cyan-50 dark:from-teal-900/30 dark:to-cyan-900/30 hover:from-teal-100 hover:to-cyan-100 dark:hover:from-teal-800/50 dark:hover:to-cyan-800/50 transition-all shadow-sm">
-                <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white dark:border-gray-800 shadow">
+                <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-white dark:border-gray-800 shadow-xs">
                   <img
                     src={
                       defaultProfileImage

@@ -8,11 +8,13 @@ import { authApi } from "@/services";
 import { localStorageKeys } from "@/constants";
 
 interface IAuthState {
+  isLoading: boolean;
   isAuthenticated: boolean;
   user: IUser | null;
 }
 
 const initialState : IAuthState = {
+  isLoading: true,
   isAuthenticated: false,
   user: null
 }
@@ -32,8 +34,15 @@ export const authSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addMatcher(
+      authApi.endpoints.me.matchPending,
+      (state) => {
+        state.isLoading = true;
+      }
+    );
+    builder.addMatcher(
       authApi.endpoints.me.matchFulfilled,
       (state, {payload}) => {
+        state.isLoading = false;
         if(payload.IsSuccess){
           state.isAuthenticated = true;
           state.user = payload.Data.user;
@@ -41,6 +50,12 @@ export const authSlice = createSlice({
         else {
           state = initialState
         }
+      }
+    );
+    builder.addMatcher(
+      authApi.endpoints.me.matchRejected,
+      (state) => {
+        state.isLoading = false;
       }
     );
     builder.addMatcher(

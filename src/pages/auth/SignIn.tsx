@@ -99,7 +99,7 @@ export default function SignIn() {
               {/* Feature highlights */}
               <div className="mt-8 space-y-4">
                 <div className="flex items-start space-x-3 group">
-                  <div className="flex-shrink-0 mt-1 transition-transform duration-300 group-hover:scale-110">
+                  <div className="shrink-0 mt-1 transition-transform duration-300 group-hover:scale-110">
                     <svg className="h-5 w-5 text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                     </svg>
@@ -107,7 +107,7 @@ export default function SignIn() {
                   <p className="text-teal-100">Secure end-to-end encrypted messaging</p>
                 </div>
                 <div className="flex items-start space-x-3 group">
-                  <div className="flex-shrink-0 mt-1 transition-transform duration-300 group-hover:scale-110">
+                  <div className="shrink-0 mt-1 transition-transform duration-300 group-hover:scale-110">
                     <svg className="h-5 w-5 text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                     </svg>
@@ -115,7 +115,7 @@ export default function SignIn() {
                   <p className="text-teal-100">Connect with people worldwide</p>
                 </div>
                 <div className="flex items-start space-x-3 group">
-                  <div className="flex-shrink-0 mt-1 transition-transform duration-300 group-hover:scale-110">
+                  <div className="shrink-0 mt-1 transition-transform duration-300 group-hover:scale-110">
                     <svg className="h-5 w-5 text-teal-300" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
                     </svg>

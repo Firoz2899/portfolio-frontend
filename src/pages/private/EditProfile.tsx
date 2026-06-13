@@ -64,7 +64,7 @@ export default function EditProfile() {
   }
 
   return (
-    <div className={`min-h-screen relative overflow-hidden theme-page-base ${isDarkMode ? 'theme-page-dark' : 'theme-page-light'}`} ref={containerRef}>
+    <div className={`min-h-screen relative overflow-hidden ${isDarkMode ? 'dark bg-gray-900' : 'bg-gradient-to-br from-gray-50 to-gray-100'}`} ref={containerRef}>
       {/* Background Pattern */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 dark:opacity-10"></div>

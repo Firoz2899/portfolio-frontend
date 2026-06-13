@@ -6,6 +6,8 @@ export interface IProfile {
   FullName: string;
   Email: string;
   Slug: string;
+  Hobbies: string[],
+  Language: any[],
   createdAt: string;
   updatedAt: string;
   Skills: ISkill[];

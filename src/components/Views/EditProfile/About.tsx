@@ -13,12 +13,14 @@ import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useAlert } from "../../Common/Alert";
 import { useDispatch } from "react-redux";
+import { useThemeMode } from '@/hooks/useThemeMode';
+import { useAppSelector } from '@/hooks';
 // import { setRefresh } from '../../../States/Slice/LoadingSlice';
 
-const About = ({ darkMode, user }) => {
-
+const About = () => {
+  const {isDarkMode: darkMode} = useThemeMode()
+  const {editProfile: user} = useAppSelector(x => x.profile)
   const { showAlert } = useAlert();
-  const dispatch = useDispatch();
 
   const availableIcons = [
     { name: 'FaHiking', component: <FaHiking /> },
@@ -55,8 +57,8 @@ const About = ({ darkMode, user }) => {
   ];
 
   const [personalInfo, setPersonalInfo] = useState(user);
-  const [interests, setInterests] = useState([]);
-  const [languages, setLanguages] = useState([]);
+  const [interests, setInterests] = useState<string[]>([]);
+  const [languages, setLanguages] = useState<any[]>([]);
   const [newInterest, setNewInterest] = useState({ name: '', icon: 'FaHiking' });
   const [newLanguage, setNewLanguage] = useState({ name: '', level: 'Basic' });
   const [saving, setSaving] = useState(false);

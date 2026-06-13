@@ -916,7 +916,7 @@ export default function Dashboard() {
 
                 <div className="space-y-4">
                   <div className="flex items-start">
-                    <div className="flex-shrink-0 mt-1">
+                    <div className="shrink-0 mt-1">
                       <svg className={`h-5 w-5 ${oceanPalette.text}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
@@ -924,7 +924,7 @@ export default function Dashboard() {
                     <p className="ml-3 text-gray-600">Share your digital profile instantly with anyone</p>
                   </div>
                   <div className="flex items-start">
-                    <div className="flex-shrink-0 mt-1">
+                    <div className="shrink-0 mt-1">
                       <svg className={`h-5 w-5 ${oceanPalette.text}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>
@@ -932,7 +932,7 @@ export default function Dashboard() {
                     <p className="ml-3 text-gray-600">Track who views your card and when</p>
                   </div>
                   <div className="flex items-start">
-                    <div className="flex-shrink-0 mt-1">
+                    <div className="shrink-0 mt-1">
                       <svg className={`h-5 w-5 ${oceanPalette.text}`} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                       </svg>

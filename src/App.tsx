@@ -4,15 +4,19 @@ import {authApiHooks} from '@/services'
 import { useAppSelector } from "./hooks";
 import { localStorageKeys } from "./constants";
 import { useThemeMode } from "./hooks/useThemeMode";
+import { Loader } from "./components/Common/Loader";
 
 function App() {
   useThemeMode();
   const token = localStorage.getItem(localStorageKeys.accessToken);
-  const user = useAppSelector((state) => state.auth.user);
+  const {user, isLoading, isAuthenticated} = useAppSelector((state) => state.auth);
   authApiHooks.useMeQuery(undefined, {
     skip: !token || !!user,
   })
-
+  
+  if(isLoading && !isAuthenticated){
+    return <Loader/>
+  }
 
   const routes = getAccessibleRoutes(user?.Role || [])
     .map(route => {

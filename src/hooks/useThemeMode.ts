@@ -9,7 +9,6 @@ type ThemeMode = "light" | "dark";
 export  function useThemeMode() {
   const prefersDark = useMediaQuery('(prefers-color-scheme: dark)')
   const [mode, setMode] = useLocalStorage<ThemeMode | null>(localStorageKeys.themeMode, null)
-  const {themeMode} = useAppSelector(x => x.app)
   const {setThemeMode} = useAppActions()
 
   // Effective mode
@@ -19,17 +18,6 @@ export  function useThemeMode() {
     document.documentElement.classList.toggle("dark", currentMode === "dark");
     setThemeMode(currentMode)
   }, [currentMode]);
-
-  
-  useEffect(() => {
-    if (themeMode === "dark") {
-      document.documentElement.classList.add('dark');
-      document.body.classList.add('dark:bg-gray-900');
-    } else {
-      document.documentElement.classList.remove('dark');
-      document.body.classList.remove('dark:bg-gray-900');
-    }
-  }, [themeMode]);
 
   const toggleTheme = () => {
     const finalMode = currentMode === "dark" ? "light" : "dark";
