@@ -25,6 +25,14 @@ export const Roles = {
 
 export type RoleType = typeof Roles[keyof typeof Roles];
 
+export const LanguageLevel = {
+    BASIC: "Basic",
+    INTERMEDIATE: "Intermediate",
+    NATIVE: "Native"
+} as const
+
+export type LanguageType = typeof LanguageLevel[keyof typeof LanguageLevel];
+
 export const ROLE_HIERARCHY = {
     [Roles.USER]: [Roles.USER],
     [Roles.SUPERADMIN]: [

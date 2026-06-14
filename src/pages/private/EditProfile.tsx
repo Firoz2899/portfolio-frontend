@@ -13,6 +13,7 @@ import { useAppSelector, useAppActions } from '@/hooks';
 import { NavigationSidebarItem } from '@/components/Common';
 import { useThemeMode } from '@/hooks/useThemeMode';
 import { Loader } from '@/components/Common/Loader';
+import AboutMe from '@/components/Views/EditProfile/About'
 
 
 export default function EditProfile() {
@@ -47,9 +48,7 @@ export default function EditProfile() {
     });
     
     if(res.IsSuccess){
-      setTimeout(() => {
-        navigate(dashboardRoute?.path || "");
-      }, 1500);
+      navigate(dashboardRoute?.path || "");
     }
   };
 
@@ -178,6 +177,7 @@ export default function EditProfile() {
         {/* Content area */}
         <main className="p-4 lg:p-8">
           {/* Render sections here */}
+          <AboutMe/>
         </main>
 
         {/* Footer */}

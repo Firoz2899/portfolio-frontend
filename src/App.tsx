@@ -11,7 +11,7 @@ function App() {
   const token = localStorage.getItem(localStorageKeys.accessToken);
   const {user, isLoading, isAuthenticated} = useAppSelector((state) => state.auth);
   authApiHooks.useMeQuery(undefined, {
-    skip: !token || !!user,
+    skip: !!(token && isAuthenticated),
   })
   
   if(isLoading && !isAuthenticated){

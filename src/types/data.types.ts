@@ -1,13 +1,22 @@
-import type { RoleType } from "@/constants";
+import type { LanguageType, RoleType } from "@/constants";
 
 export interface IProfile {
   UserUniqueCode: string;
   UniqueCode: string;
-  FullName: string;
+  FirstName: string;
+  LastName: string;
   Email: string;
-  Slug: string;
+  Phone: string;
+  Designation: string;
   Hobbies: string[],
-  Language: any[],
+  Language: ILanguage[],
+  Availability: string;
+  Summary: string;
+  AboutMe: string;
+  ProfileImage: IMedia;
+  CoverImage: IMedia;
+  Address: IAddress;
+  Slug: string;
   createdAt: string;
   updatedAt: string;
   Skills: ISkill[];
@@ -17,8 +26,67 @@ export interface IProfile {
   Contacts: IContact[];
 }
 
+export interface ILanguage {
+  UniqueCode?: string;
+  Name: string;
+  Level: LanguageType
+}
+
+export interface IMedia {
+  UniqueCode: string;
+  OriginalUrl: string;
+  ThumbnailUrl: string;
+  PublicId: string;
+  Alt: string;
+  Caption: string;
+  Width: number;
+  Height: number;
+  Size: number;
+  SortOrder: number;
+}
+
+export interface IAddress {
+  UniqueCode: string
+  AddressLine1: string
+  AddressLine2: string
+  Country: ICountry
+  State: IState
+  City: ICity
+  Pincode: string
+}
+
+export interface ICountry {
+  Name: string;
+  Code: string;
+  PhoneCode: string;
+  Flag: string;
+  Currency: string;
+}
+
+export interface IState {
+  Name: string;
+  Code: string;
+  CountryCode: string;
+}
+
+export interface ICity {
+  Name: string;
+  CountryCode: string;
+  StateCode: string;
+}
 export interface ISkill {
-  [key: string]: any;
+  UniqueCode: string;
+  ProfileUniqueCode: string;
+  Title: string;
+  Icon: string;
+  Skills: ISubSkill[];
+  SortOrder: string;
+}
+
+export interface ISubSkill {
+  UniqueCode: string;
+  Name: string;
+  Percentage: number;
 }
 
 export interface IExperience {

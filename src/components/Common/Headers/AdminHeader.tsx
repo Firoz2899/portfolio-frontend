@@ -31,9 +31,7 @@ export function AdminHeader () {
     });
     
     if(res.IsSuccess){
-      setTimeout(() => {
-        navigate(dashboardRoute?.path || "");
-      }, 1500);
+      navigate(dashboardRoute?.path || "");
     }
   };
 
