@@ -3,8 +3,9 @@ import { motion } from 'framer-motion';
 import { useHover } from 'usehooks-ts';
 import { cn } from '@/utils';
 import { useAppActions, useAppSelector } from '@/hooks';
+import type { INavigationItem } from '@/types/constants.types';
 
-export function NavigationSidebarItem({item}: {item: any}) {
+export function NavigationSidebarItem({item}: {item: INavigationItem}) {
     const {activeTab} = useAppSelector(x => x.app)
     const {setActiveTab, setSidebarOpen} = useAppActions()
     const eleRef = useRef<HTMLButtonElement>(null!);
@@ -18,6 +19,8 @@ export function NavigationSidebarItem({item}: {item: any}) {
             setActiveTab(item.id);
             setSidebarOpen(false);
         }}
+        onMouseOver={() => item?.component?.preload()}
+        onMouseEnter={() => item?.component?.preload()}
         className={cn(
             "w-full flex items-center px-4 py-3 text-sm font-medium rounded-xl transition-all relative overflow-hidden",
             {
@@ -28,12 +31,12 @@ export function NavigationSidebarItem({item}: {item: any}) {
     >
         {/* Animated background for active item */}
         {activeTab === item.id && (
-        <motion.div
-            className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5 }}
-        />
+            <motion.div
+                className="absolute inset-0 bg-gradient-to-r from-white/10 to-transparent"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.5 }}
+            />
         )}
 
         <span className="mr-3 text-lg z-10">{item.icon}</span>

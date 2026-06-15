@@ -1,20 +1,18 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom"
-import { getAccessibleRoutes } from "./utils/route.helpers";
+import { getAccessibleRoutes } from "@/utils/route.helpers";
 import {authApiHooks} from '@/services'
-import { useAppSelector } from "./hooks";
-import { localStorageKeys } from "./constants";
-import { useThemeMode } from "./hooks/useThemeMode";
-import { Loader } from "./components/Common/Loader";
+import { useThemeMode, useAppSelector } from "@/hooks";
+import { Loader } from "@/components/Common/Loader";
 
 function App() {
   useThemeMode();
-  const token = localStorage.getItem(localStorageKeys.accessToken);
-  const {user, isLoading, isAuthenticated} = useAppSelector((state) => state.auth);
+  const {user, isLoading, isAuthenticated, authChecked} = useAppSelector((state) => state.auth);
+  const shouldSkipRefetchingData = authChecked || isAuthenticated;
   authApiHooks.useMeQuery(undefined, {
-    skip: !!(token && isAuthenticated),
+    skip: shouldSkipRefetchingData,
   })
   
-  if(isLoading && !isAuthenticated){
+  if(isLoading && (!isAuthenticated || !authChecked)){
     return <Loader/>
   }
 

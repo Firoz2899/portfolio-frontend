@@ -5,17 +5,19 @@ import {
 
 import type { IUser } from "@/types/data.types";
 import { authApi } from "@/services";
-import { localStorageKeys } from "@/constants";
+import { ApiErrorTypes, localStorageKeys } from "@/constants";
 
 interface IAuthState {
   isLoading: boolean;
   isAuthenticated: boolean;
+  authChecked: boolean;
   user: IUser | null;
 }
 
 const initialState : IAuthState = {
   isLoading: true,
   isAuthenticated: false,
+  authChecked: false,
   user: null
 }
 
@@ -43,19 +45,35 @@ export const authSlice = createSlice({
       authApi.endpoints.me.matchFulfilled,
       (state, {payload}) => {
         state.isLoading = false;
+        state.authChecked = true;
         if(payload.IsSuccess){
           state.isAuthenticated = true;
           state.user = payload.Data.user;
         }
         else {
-          state = initialState
+          state.isAuthenticated = false;
+          state.user = null;
         }
       }
     );
     builder.addMatcher(
       authApi.endpoints.me.matchRejected,
-      (state) => {
+      (state, action) => {
         state.isLoading = false;
+        const errorType = action?.payload?.data?.ErrorType ?? "";
+
+        const authErrors = [
+          ApiErrorTypes.UNAUTHORIZED,
+          ApiErrorTypes.TOKEN_EXPIRED,
+          ApiErrorTypes.INVALID_TOKEN,
+          ApiErrorTypes.REFRESH_TOKEN_INVALID_OR_EXPIRED,
+        ] as string[];
+
+        if (authErrors.includes(errorType)) {
+          state.authChecked = true;
+          state.isAuthenticated = false;
+          state.user = null;
+        }
       }
     );
     builder.addMatcher(
@@ -64,6 +82,7 @@ export const authSlice = createSlice({
         if(payload.IsSuccess){
           state.user = null;
           state.isAuthenticated = false;
+          state.authChecked = false;
           localStorage.removeItem(localStorageKeys.accessToken)
           localStorage.removeItem(localStorageKeys.refreshToken)
           localStorage.removeItem(localStorageKeys.userData)

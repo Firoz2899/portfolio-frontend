@@ -10,12 +10,14 @@ interface IProfileState {
   isLoading: boolean;
   editProfile: IProfile | null;
   profile: IProfile | null;
+  shouldRefreshProfile: boolean;
 }
 
 const initialState : IProfileState = {
   isLoading: true,
   editProfile: null,
-  profile: null
+  profile: null,
+  shouldRefreshProfile: false
 }
 
 export const ProfileSlice = createSlice({
@@ -30,6 +32,9 @@ export const ProfileSlice = createSlice({
     },
     setLoading(state, action: PayloadAction<boolean>){
         state.isLoading = action.payload
+    },
+    setShouldRefreshProfile(state, action: PayloadAction<boolean>){
+        state.shouldRefreshProfile = action.payload
     }
   },
   extraReducers: (builder) => {
@@ -39,6 +44,7 @@ export const ProfileSlice = createSlice({
         state.isLoading = false;
         if(payload.IsSuccess){
           state.editProfile = payload.Data;
+          state.shouldRefreshProfile = true;
         }
         else {
           state.editProfile = null;

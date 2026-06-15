@@ -1,4 +1,5 @@
 import type { ReservedSlugType } from "@/constants";
+import type { IProfile } from "./data.types";
 
 export interface ISignup {
     FirstName: string;
@@ -22,3 +23,18 @@ export interface IVerifyEmail {
     Email: string;
     OTP: string;
 }
+
+export type UpdateProfileForm = Pick<
+  IProfile,
+  | "FirstName"
+  | "LastName"
+  | "Email"
+  | "Phone"
+  | "Designation"
+  | "Hobbies"
+  | "Language"
+  | "Availability"
+  | "Summary"
+  | "AboutMe"
+  | "Address"
+>;

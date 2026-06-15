@@ -1,5 +1,4 @@
 import { LanguageLevel } from "@/constants";
-import type { IProfile } from "@/types/data.types";
 import { z } from "zod";
 
 export const languageSchema = z.object({
@@ -34,7 +33,7 @@ export const addressSchema = z.object({
   AddressLine2: z.string().optional(),
   Country: countrySchema,
   State: stateSchema,
-  City: citySchema,
+  City: z.string().optional(),
   Pincode: z.string().optional(),
 }).nullable().optional();
 
@@ -72,17 +71,3 @@ export const profileFormSchema = z.object({
 });
 
 export type ProfileFormValues = z.infer<typeof profileFormSchema>;
-
-// export type ProfileFormValues = Pick<
-//   IProfile,
-//   | "FullName"
-//   | "Email"
-//   | "Phone"
-//   | "Designation"
-//   | "Hobbies"
-//   | "Language"
-//   | "Availability"
-//   | "Summary"
-//   | "AboutMe"
-//   | "Address"
-// >;

@@ -11,7 +11,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem(localStorageKeys.accessToken);
 
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -40,6 +40,11 @@ axiosInstance.interceptors.response.use(
       const prevRefreshToken = localStorage.getItem(localStorageKeys.refreshToken);
 
       if(!prevRefreshToken){
+        localStorage.removeItem(localStorageKeys.accessToken);
+        localStorage.removeItem(localStorageKeys.refreshToken);
+        if (route) {
+          window.location.href = route.path;
+        }
         return Promise.reject(error);
       }
 
@@ -77,8 +82,10 @@ axiosInstance.interceptors.response.use(
         localStorage.removeItem(localStorageKeys.accessToken);
         localStorage.removeItem(localStorageKeys.refreshToken);
 
+        // store.dispatch(authActions.logout())
+
         if(route)
-          window.location.href = route.path;
+          window.location.replace(route.path);
 
         return Promise.reject(refreshError);
       }
@@ -90,6 +97,9 @@ axiosInstance.interceptors.response.use(
       errorType === ApiErrorTypes.INVALID_TOKEN
     ) {
       localStorage.removeItem(localStorageKeys.accessToken);
+      localStorage.removeItem(localStorageKeys.refreshToken);
+
+      // store.dispatch(authActions.logout())
 
       if(route)
         window.location.href = route.path;

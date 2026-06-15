@@ -6,21 +6,25 @@ import {
 import { CKEditor } from '@ckeditor/ckeditor5-react';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { useThemeMode } from '@/hooks/useThemeMode';
-import { useAppSelector } from '@/hooks';
+import { useAppActions, useAppSelector } from '@/hooks';
 import { Form, FormField, FormItem, HookFormField, useAlert } from '@/components/Common';
 import { useForm, useWatch } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { profileFormSchema, type ProfileFormValues } from '@/schemas';
 import type { ILanguage } from '@/types/data.types';
 import { cn } from '@/utils';
-import {Country, State, City, type ICountry, type ICity, type IState} from 'country-state-city'
+import {Country, State, type ICountry, type IState} from 'country-state-city'
 import { Autocomplete, TextField } from "@mui/material";
 import { LanguageLevel } from '@/constants';
+import { executeMutation, profileApiHooks } from '@/services';
+import type { UpdateProfileForm } from '@/types/payload.types';
 
 
 export default function About() {
   const {isDarkMode: darkMode} = useThemeMode()
-  const {editProfile: profileData} = useAppSelector(x => x.profile)
+  const {editProfile: profileData, shouldRefreshProfile} = useAppSelector(x => x.profile)
+  const {setShouldRefreshProfile} = useAppActions()
+  const [updateProfile] = profileApiHooks.useUpdateProfileMutation()
   const { showAlert } = useAlert();
   const [newHobby, setNewHobby] = useState("");
   const [newLanguage, setNewLanguage] = useState({
@@ -30,21 +34,14 @@ export default function About() {
 
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
-    mode: "onChange",
     defaultValues: profileData!,
   });
 
   const {control, handleSubmit, setValue, formState, reset} = form
 
-  // useEffect(() => {
-  //   if (profileData) {
-  //     reset(profileData);
-  //   }
-  // }, [profileData, reset]);
-
   const hobbies = useWatch({ control, name: "Hobbies" })
 
-  const languages = useWatch({ control, name: "Language" })
+  const languages = (useWatch({ control, name: "Language" }) || []) as ILanguage[];
 
   const selectedCountry = useWatch({ control, name: "Address.Country" })
   const selectedState = useWatch({ control, name: "Address.State" })
@@ -56,26 +53,24 @@ export default function About() {
     return State.getStatesOfCountry(selectedCountry.Code);
   }, [selectedCountry]);
 
-  const cities = useMemo(() => {
-    if (!selectedState) return [];
-
-    return City.getCitiesOfState(
-      selectedState.CountryCode,
-      selectedState.Code
-    );
-  }, [selectedCountry, selectedState]);
-
   useEffect(() => {
     if(!selectedCountry){
       setValue("Address.State", undefined)
-      setValue("Address.City", undefined)
-    }
-    
-    if(selectedCountry && !selectedState){
-      setValue("Address.City", undefined)
     }
   }, [selectedCountry, selectedState])
   
+  useEffect(() => {
+    if (shouldRefreshProfile && profileData) {
+      reset(profileData);
+      setNewHobby("")
+      setNewLanguage({
+        Name: "",
+        Level: LanguageLevel.BASIC
+      })
+      setShouldRefreshProfile(false);
+    }
+  }, [shouldRefreshProfile, profileData, reset]);
+
   // Add new interest
   const handleAddHobbie = () => {
     const hobby = newHobby.trim();
@@ -118,17 +113,14 @@ export default function About() {
     setValue("Language", (languages || [])?.filter((x) => x?.Name !== lang.Name));
   };
 
-  // Save changes - Fixed the event handler
   const handleSave = handleSubmit(async (data, e) => {
     e!.preventDefault();
 
+    const res = await executeMutation(updateProfile(data as UpdateProfileForm).unwrap())
+
     showAlert({
-      type: "success",
+      type: res.IsSuccess ? "success" : "error",
       message: "Your profile has been updated successfully.",
-    });
-    showAlert({
-      type: "error",
-      message: "A network error occurred. Please check your connection and try again.",
     });
   });
 
@@ -410,9 +402,9 @@ export default function About() {
                           name='Address.State'
                           render={({field, fieldState}) => (
                             <HookFormField
-                              label='State/Province'
-                              labelClassName={inputLabelClassName}
-                              startAdornment={<FaMapMarkerAlt className={inputIconClassName} />}
+                                label='State/Province'
+                                labelClassName={inputLabelClassName}
+                                startAdornment={<FaMapMarkerAlt className={inputIconClassName} />}
                               >
                               <Autocomplete
                                 options={states}
@@ -458,39 +450,7 @@ export default function About() {
                               labelClassName={inputLabelClassName}
                               startAdornment={<FaCityIcon className={inputIconClassName} />}
                               >
-                              <Autocomplete
-                                options={cities}
-                                getOptionLabel={(option) => option.name}
-                                value={cities.find(
-                                  (city: ICity) =>
-                                    city.name === field.value?.Name &&
-                                    city.countryCode === field.value?.CountryCode &&
-                                    city.stateCode === field.value?.StateCode
-                                ) ?? null}
-                                onChange={(_, value) => field.onChange(value ? {
-                                  Name: value.name,
-                                  CountryCode: value.countryCode,
-                                  StateCode: value.stateCode
-                                } : null)}
-                                isOptionEqualToValue={(option, value) =>
-                                  option.name === value?.name
-                                  && option.countryCode === value?.countryCode
-                                  && option.stateCode === value?.stateCode
-                                }
-                                renderInput={(params) => (
-                                  <TextField
-                                    {...params}
-                                    error={!!fieldState.error}
-                                    helperText={fieldState.error?.message}
-                                  />
-                                )}
-                                sx={autoCompleteSX}
-                                slotProps={{
-                                  paper: {
-                                    sx: autoCompletePaperSX,
-                                  },
-                                }}
-                              />
+                                <input className={addressInputFieldClassName} {...field} />
                             </HookFormField>
                           )}
                         />
@@ -626,7 +586,7 @@ export default function About() {
 
                       <div className="p-6">
                         <div className="space-y-4 mb-6">
-                          {(languages || [])?.map((lang) => (
+                          {(languages || [])?.map((lang: ILanguage) => (
                             <div 
                               key={lang?.Name} 
                               className={cn("p-4 rounded-lg border", {
@@ -835,11 +795,17 @@ export default function About() {
 
 interface ISectionHeader {
   label: string;
-  color: string;
+  color: SectionColor;
   icon: ComponentType<{
     className?: string;
   }>;
 }
+type SectionColor =
+  | "blue"
+  | "indigo"
+  | "green"
+  | "pink"
+  | "purple";
 
 function SectionHeader({
   label,
@@ -847,6 +813,22 @@ function SectionHeader({
   icon: Icon
 }: ISectionHeader) {
   const {isDarkMode} = useThemeMode()
+
+  const bgColorMap: Record<SectionColor, string> = {
+    blue: isDarkMode ? "bg-blue-900/30" : "bg-blue-100",
+    indigo: isDarkMode ? "bg-indigo-900/30" : "bg-indigo-100",
+    green: isDarkMode ? "bg-green-900/30" : "bg-green-100",
+    pink: isDarkMode ? "bg-pink-900/30" : "bg-pink-100",
+    purple: isDarkMode ? "bg-purple-900/30" : "bg-purple-100",
+  };
+
+  const textColorMap: Record<SectionColor, string> = {
+    blue: isDarkMode ? "text-blue-400" : "text-blue-600",
+    indigo: isDarkMode ? "text-indigo-400" : "text-indigo-600",
+    green: isDarkMode ? "text-green-400" : "text-green-600",
+    pink: isDarkMode ? "text-pink-400" : "text-pink-600",
+    purple: isDarkMode ? "text-purple-400" : "text-purple-600",
+  };
   return (
     <div 
       className={cn("px-6 py-4 border-b", {
@@ -856,16 +838,10 @@ function SectionHeader({
     >
       <div className="flex items-center">
         <div 
-          className={cn("p-2 rounded-lg mr-3", {
-            [`bg-${color}-900/30`]: isDarkMode,
-            [`bg-${color}-100`]: !isDarkMode
-          })}
+          className={cn("p-2 rounded-lg mr-3", bgColorMap[color])}
         >
           <Icon 
-            className={cn("text-lg", {
-              [`text-${color}-400`]: isDarkMode,
-              [`text-${color}-600`]: !isDarkMode
-            })} 
+            className={cn("text-lg", textColorMap[color])} 
           />
         </div>
         <h2 

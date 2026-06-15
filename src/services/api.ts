@@ -12,7 +12,7 @@ export const api = createApi({
     "Skill",
     "Service",
     "Experience",
-    "Signin"
+    "Update-Profile"
   ],
   endpoints: () => ({}),
 });

@@ -1,18 +1,17 @@
+import About from '@/components/Views/EditProfile/About';
+import type { INavigationItem } from '@/types/constants.types';
+import loadable from '@loadable/component';
 import {
   FaUser, FaInfoCircle, FaBriefcase, FaGraduationCap, FaCode, FaProjectDiagram,
   FaCertificate, FaComments, FaBlog, FaYoutube, FaVideo, FaHeartbeat,
   FaPhoneAlt, FaFileAlt, FaChartBar, FaQrcode,
-  FaCog, FaSave, FaSignOutAlt, FaMoon, FaSun, FaBars, FaTimes, FaArrowRight,
-  FaEye, FaEdit, FaPlus, FaSearch, FaChevronDown,
-  FaThLarge, FaList, FaTachometerAlt, FaPalette, FaMountain,
-  FaLeaf, FaTree, FaGem, FaFeather,
+  FaTachometerAlt,  FaMountain,
+  FaLeaf, FaTree, FaFeather,
   FaDragon, FaKiwiBird, FaHorse, FaFish, FaSpider, FaBug, FaCat, FaDog, FaCrow,
-  FaImages, FaUsers, FaMusic,
-  FaRocket, FaChartLine, FaTrophy, FaGlobe, FaHeart, FaMedal,
-  FaGlobe as FaGlobeAlt
+  FaImages, FaUsers, FaMusic
 } from 'react-icons/fa';
 
-export const navigationItems = [
+export const navigationItems: INavigationItem[] = [
     {
       id: 'dashboard',
       name: 'Dashboard',
@@ -29,7 +28,8 @@ export const navigationItems = [
       description: 'Personal information',
       color: 'from-blue-400 to-sky-500',
       accent: 'blue',
-      natureIcon: <FaLeaf />
+      natureIcon: <FaLeaf />,
+      component: loadable(x => import("@/components/Views/EditProfile/About"))
     },
     {
       id: 'hero',

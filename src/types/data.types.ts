@@ -46,13 +46,13 @@ export interface IMedia {
 }
 
 export interface IAddress {
-  UniqueCode: string
-  AddressLine1: string
-  AddressLine2: string
-  Country: ICountry
-  State: IState
-  City: ICity
-  Pincode: string
+  UniqueCode: string;
+  AddressLine1: string;
+  AddressLine2: string;
+  Country: ICountry;
+  State: IState;
+  City: string;
+  Pincode: string;
 }
 
 export interface ICountry {

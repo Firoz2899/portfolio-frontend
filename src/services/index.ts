@@ -1,5 +1,5 @@
-export * from './axiosService'
 export * from './axiosInstance'
+export * from './axiosService'
 export * from './api'
 export * from "./authApi"
 export * from "./profileApi"

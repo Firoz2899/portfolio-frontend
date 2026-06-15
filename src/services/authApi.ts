@@ -20,7 +20,7 @@ export const authApi = api.injectEndpoints({
         method: "POST",
         data,
       }),
-      invalidatesTags: ["Signin"], // use this for auto trigger that api which has this tag as providesTags
+      invalidatesTags: [], // use this for auto trigger that api which has this tag as providesTags
       async onQueryStarted(_, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;

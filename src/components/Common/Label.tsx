@@ -9,7 +9,7 @@ export const Label = ({
 }: LabelProps) => {
   return (
     <label
-      className={`block text-sm font-medium text-gray-700 mb-1 ${className ?? ""}`}
+      className={`block text-sm font-medium mb-1 ${className ?? ""}`}
       {...props}
     >
       {children}
