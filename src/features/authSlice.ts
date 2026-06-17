@@ -6,19 +6,22 @@ import {
 import type { IUser } from "@/types/data.types";
 import { authApi } from "@/services";
 import { ApiErrorTypes, localStorageKeys } from "@/constants";
+import { router } from "@/App";
 
 interface IAuthState {
   isLoading: boolean;
   isAuthenticated: boolean;
   authChecked: boolean;
   user: IUser | null;
+  retryRefreshingTokenCount: number;
 }
 
 const initialState : IAuthState = {
   isLoading: true,
   isAuthenticated: false,
   authChecked: false,
-  user: null
+  user: null,
+  retryRefreshingTokenCount: 0
 }
 
 export const authSlice = createSlice({
@@ -30,9 +33,16 @@ export const authSlice = createSlice({
       state.isAuthenticated = true;
     },
     logout(state) {
-      state.user = null;
       state.isAuthenticated = false;
+      state.user = null;
+      state.authChecked = false;
     },
+    setRetringRefreshTokenCount(state){
+      state.retryRefreshingTokenCount = state.retryRefreshingTokenCount + 1;
+    },
+    setAuthChecked(state, action: PayloadAction<boolean>){
+      state.authChecked = action.payload;
+    }
   },
   extraReducers: (builder) => {
     builder.addMatcher(
@@ -83,9 +93,8 @@ export const authSlice = createSlice({
           state.user = null;
           state.isAuthenticated = false;
           state.authChecked = false;
-          localStorage.removeItem(localStorageKeys.accessToken)
-          localStorage.removeItem(localStorageKeys.refreshToken)
           localStorage.removeItem(localStorageKeys.userData)
+          router.navigate("/SignIn")
         }
       }
     );

@@ -1,18 +1,24 @@
-import { createBrowserRouter, RouterProvider } from "react-router-dom"
+import { createBrowserRouter, RouterProvider, type Router as createBrowserRouterType } from "react-router-dom"
 import { getAccessibleRoutes } from "@/utils/route.helpers";
-import {authApiHooks} from '@/services'
+import {authApiHooks, setupAxiosInstance} from '@/services'
 import { useThemeMode, useAppSelector } from "@/hooks";
 import { Loader } from "@/components/Common/Loader";
+import { useStore } from 'react-redux'
+import { localStorageKeys } from "./constants";
+
+export let router: any;
 
 function App() {
+  const userData = localStorage.getItem(localStorageKeys.userData);
+  const store = useStore()
+  setupAxiosInstance(store)
   useThemeMode();
-  const {user, isLoading, isAuthenticated, authChecked} = useAppSelector((state) => state.auth);
-  const shouldSkipRefetchingData = authChecked || isAuthenticated;
+  const {user, isLoading, authChecked} = useAppSelector((state) => state.auth);
   authApiHooks.useMeQuery(undefined, {
-    skip: shouldSkipRefetchingData,
+    skip: authChecked || !userData,
   })
   
-  if(isLoading && (!isAuthenticated || !authChecked)){
+  if(isLoading && !authChecked){
     return <Loader/>
   }
 
@@ -33,7 +39,7 @@ function App() {
       };
     });
 
-  const router = createBrowserRouter(routes);
+  router = createBrowserRouter(routes);
   return (
     <RouterProvider router={router} />
   )

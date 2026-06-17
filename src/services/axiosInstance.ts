@@ -1,112 +1,153 @@
-// src/services/axiosInstance.js
+import axios, { type AxiosInstance as axiosInstanceType } from "axios";
+import {
+  ApiErrorTypes,
+  apiUrls,
+  config,
+  localStorageKeys,
+} from "@/constants";
 
-import axios from "axios";
-import { config, ApiErrorTypes, apiUrls, localStorageKeys, RouteNames } from "@/constants";
-import {getRoute} from '@/utils/route.helpers'
+import { logout } from "@/utils";
+import { router } from "@/App";
 
-const axiosInstance = axios.create({
-  baseURL: config.apiBaseUrl,
-  withCredentials: true,
-});
+export let axiosInstance: axiosInstanceType | null = null;
 
-axiosInstance.interceptors.request.use(
-  (config) => {
-    const token = localStorage.getItem(localStorageKeys.accessToken);
 
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+let isRefreshing = false;
+
+let failedQueue: {
+  resolve: (token: string) => void;
+  reject: (error: any) => void;
+}[] = [];
+
+
+const processQueue = (
+  error: any,
+  token: string | null = null
+) => {
+  failedQueue.forEach((promise) => {
+    if (error) {
+      promise.reject(error);
+    } else {
+      promise.resolve(token!);
     }
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
+  });
 
-axiosInstance.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
-    const errorType = error.response?.data?.ErrorType;
-    const route = getRoute(RouteNames.auth.SignIn)
+  failedQueue = [];
+};
 
-    // Prevent infinite refresh loops
-    if (originalRequest._retry) {
-      return Promise.reject(error);
-    }
 
-     // Access token expired
-    if (errorType === ApiErrorTypes.TOKEN_EXPIRED) {
-      originalRequest._retry = true;
+export const setupAxiosInstance = (store: any) => {
+  axiosInstance = axios.create({
+    baseURL: config.apiBaseUrl,
+    withCredentials: true,
+  });
 
-      const prevRefreshToken = localStorage.getItem(localStorageKeys.refreshToken);
+  axiosInstance.interceptors.request.use(
+    (config) => {
+      const accessToken = localStorage.getItem(
+        localStorageKeys.accessToken
+      );
 
-      if(!prevRefreshToken){
-        localStorage.removeItem(localStorageKeys.accessToken);
-        localStorage.removeItem(localStorageKeys.refreshToken);
-        if (route) {
-          window.location.href = route.path;
-        }
+      if (accessToken) {
+        config.headers.Authorization =
+          `Bearer ${accessToken}`;
+      }
+
+      return config;
+    },
+    Promise.reject
+  );
+
+  
+  axiosInstance.interceptors.response.use(
+    (response) => response,
+
+    async (error) => {
+      const originalRequest = error.config;
+
+      const errorType =
+        error?.response?.data?.ErrorType;
+
+      if (
+        originalRequest?._retry ||
+        originalRequest?.url?.includes(
+          apiUrls.auth.refreshToken
+        )
+      ) {
         return Promise.reject(error);
       }
 
+      const isTokenExpired =
+        errorType === ApiErrorTypes.TOKEN_EXPIRED ||
+        errorType === ApiErrorTypes.INVALID_TOKEN;
+
+      if (!isTokenExpired) {
+        return Promise.reject(error);
+      }
+
+      if (isRefreshing) {
+        return new Promise((resolve, reject) => {
+          failedQueue.push({
+            resolve: (token) => {
+              originalRequest.headers.Authorization =
+                `Bearer ${token}`;
+
+              resolve(
+                axiosInstance?.(originalRequest)
+              );
+            },
+            reject,
+          });
+        });
+      }
+
+      originalRequest._retry = true;
+      isRefreshing = true;
 
       try {
-        const refreshResponse = await axios.post(
+        const response = await axios.post(
           apiUrls.auth.refreshToken,
-          {
-            refreshToken: prevRefreshToken
-          },
+          {},
           {
             baseURL: config.apiBaseUrl,
             withCredentials: true,
           }
         );
 
-        const accessToken = refreshResponse.data.Data.accessToken;
-        
+        const accessToken =
+          response.data.Data.accessToken;
+
         localStorage.setItem(
           localStorageKeys.accessToken,
           accessToken
         );
-        
-        const refreshToken = refreshResponse.data.Data.refreshToken;
-        localStorage.setItem(
-          localStorageKeys.refreshToken,
-          refreshToken
-        );
+
+        processQueue(null, accessToken);
 
         originalRequest.headers.Authorization =
           `Bearer ${accessToken}`;
 
-        return axiosInstance(originalRequest);
-      } catch (refreshError) {
-        localStorage.removeItem(localStorageKeys.accessToken);
-        localStorage.removeItem(localStorageKeys.refreshToken);
+        return axiosInstance?.(originalRequest);
+      } catch (refreshError: any) {
+        processQueue(refreshError);
 
-        // store.dispatch(authActions.logout())
+        const refreshErrorType =
+          refreshError?.response?.data?.ErrorType;
 
-        if(route)
-          window.location.replace(route.path);
+        if (
+          refreshErrorType ===
+            ApiErrorTypes.REFRESH_TOKEN_INVALID_OR_EXPIRED ||
+          refreshErrorType ===
+            ApiErrorTypes.INVALID_TOKEN
+        ) {
+          logout(store);
+        }
 
         return Promise.reject(refreshError);
+      } finally {
+        isRefreshing = false;
       }
     }
+  );
+}
 
-    // Refresh token invalid/expired
-    if (
-      errorType === ApiErrorTypes.REFRESH_TOKEN_INVALID_OR_EXPIRED ||
-      errorType === ApiErrorTypes.INVALID_TOKEN
-    ) {
-      localStorage.removeItem(localStorageKeys.accessToken);
-      localStorage.removeItem(localStorageKeys.refreshToken);
-
-      // store.dispatch(authActions.logout())
-
-      if(route)
-        window.location.href = route.path;
-    }
-    
-    return Promise.reject(error);
-  }
-);
-
-export {axiosInstance};

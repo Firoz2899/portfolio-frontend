@@ -48,10 +48,6 @@ export default function SignIn() {
     })
 
     if(res.IsSuccess){
-      if(data.RememberMe){
-        localStorage.setItem(localStorageKeys.refreshToken, res.Data.tokens.refreshToken)
-      }
-      localStorage.setItem(localStorageKeys.accessToken, res.Data.tokens.accessToken)
       localStorage.setItem(localStorageKeys.userData, JSON.stringify(res.Data.user))
       
       setTimeout(() => {

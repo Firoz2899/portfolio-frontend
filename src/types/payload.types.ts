@@ -17,6 +17,7 @@ export interface ISlugValidate {
 export interface ISignIn {
     Email: string;
     Password: string;
+    RememberMe: boolean;
 }
 
 export interface IVerifyEmail {
