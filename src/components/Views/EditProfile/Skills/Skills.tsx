@@ -1,14 +1,15 @@
 // components/Skills.js
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { FaLeaf, FaPlus, FaTrash } from 'react-icons/fa';
 import { useAppActions, useAppSelector, useThemeMode } from '@/hooks';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { addSkillSchema, addSubSkillSchema, addTechnologySchema, type AddSkillSchemaFormData, type AddSubSkillSchemaFormData, type AddTechnologySchemaFormData } from '@/schemas/skillSchema';
+import { addSkillSchema, addSubSkillSchema, addTechnologySchema, type AddSkillSchemaFormData, type AddTechnologySchemaFormData } from '@/schemas/skillSchema';
 import { Form, FormField, FormItem, FormMessage, FormControl, FormLabel, useAlert } from '@/components/Common';
 import { Loader2 } from 'lucide-react';
 import CategoryWithSkillCard from './CategoryWithSkillCard';
 import { executeMutation, skillApiHooks } from '@/services';
+import { GROUPED_PROFESSION_ICONS } from '@/data';
 
 const initialSkill = {
   Title: "",
@@ -73,11 +74,9 @@ export default function Skills(){
 
   const handleSaveSubSkill = subSkillForm.handleSubmit(async (data) => {
     const res = await executeMutation(createSubSkillApi(data).unwrap())
-    if(res){
-      showAlertMessage(res.IsSuccess, res.Message)
-      if(res.IsSuccess){
-        subSkillForm.reset(initialSubSkill)
-      }
+    showAlertMessage(res.IsSuccess, res.Message)
+    if(res.IsSuccess){
+      subSkillForm.reset(initialSubSkill)
     }
   })
 
@@ -161,10 +160,25 @@ export default function Skills(){
                             className="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
                             {...field}
                           >
-                            <option value="mountain">Mountain</option>
-                            <option value="tree">Tree</option>
-                            <option value="leaf">Leaf</option>
-                            <option value="hiking">Hiking</option>
+                            {Object.entries(GROUPED_PROFESSION_ICONS)
+                              .sort(([a], [b]) => a.localeCompare(b))
+                              .map(([group, items]) => (
+                                <optgroup
+                                  key={group}
+                                  label={group}
+                                >
+                                  {items
+                                    .sort((a, b) => a.label.localeCompare(b.label))
+                                    .map((item) => (
+                                      <option
+                                        key={`${item.value}-field`}
+                                        value={item.value}
+                                      >
+                                        {item.label}
+                                      </option>
+                                    ))}
+                                </optgroup>
+                              ))}
                           </select>
                         </FormControl>
                         <FormMessage />                      
@@ -293,7 +307,7 @@ export default function Skills(){
               </div>
             )}
             {skills.length > 0 && (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {skills.map((item) => (
                   <CategoryWithSkillCard key={`skill-category-list-${item.UniqueCode}`} data={item}/>
                 ))}

@@ -14,6 +14,19 @@ export const skillApi = api.injectEndpoints({
         data
       })
     }),
+    updateSkill: builder.mutation<ApiResponse<ISkill>, ISkill>({
+      query: (data) => ({
+        url: skills.updateSkill.replace(UniqueCodekeys.unique, data.UniqueCode),
+        method: "PUT",
+        data
+      })
+    }),
+    deleteSkill: builder.mutation<ApiResponse<{uniqueCode: string}>, {uniqueCode: string}>({
+      query: ({uniqueCode}) => ({
+        url: skills.deleteSkill.replace(UniqueCodekeys.unique, uniqueCode),
+        method: "DELETE",
+      })
+    }),
     createSubSkill: builder.mutation<ApiResponse<ICreateSubSkillRes>, {Category: string, Name: string, Percentage: number}>({
       query: (data) => ({
         url: skills.createSubSkill.replace(UniqueCodekeys.unique, data.Category),

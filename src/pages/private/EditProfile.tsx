@@ -2,7 +2,7 @@ import { profileApiHooks } from '@/services';
 import { useAppSelector } from '@/hooks';
 import { Loader } from '@/components/Common/Loader';
 import AdminLayout from '@/components/Layout/AdminLayout';
-import { navigationItems } from '@/constants';
+import { navigationItems } from '@/data';
 
 
 export default function EditProfile() {
