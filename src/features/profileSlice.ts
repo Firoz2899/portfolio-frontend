@@ -1,23 +1,28 @@
 import {
   createSlice,
   type PayloadAction,
+  current
 } from "@reduxjs/toolkit";
 
-import type { IProfile } from "@/types/data.types";
-import { profileApi } from "@/services";
+import type { IProfile, ISkill } from "@/types/data.types";
+import { profileApi, skillApi } from "@/services";
 
 interface IProfileState {
   isLoading: boolean;
   editProfile: IProfile | null;
   profile: IProfile | null;
   shouldRefreshProfile: boolean;
+  hasUpdatedAnyField: boolean;
+  skills: ISkill[]
 }
 
 const initialState : IProfileState = {
   isLoading: true,
   editProfile: null,
   profile: null,
-  shouldRefreshProfile: false
+  shouldRefreshProfile: false,
+  hasUpdatedAnyField: false,
+  skills: []
 }
 
 export const ProfileSlice = createSlice({
@@ -31,10 +36,16 @@ export const ProfileSlice = createSlice({
       state.profile = null;
     },
     setLoading(state, action: PayloadAction<boolean>){
-        state.isLoading = action.payload
+      state.isLoading = action.payload
     },
     setShouldRefreshProfile(state, action: PayloadAction<boolean>){
-        state.shouldRefreshProfile = action.payload
+      state.shouldRefreshProfile = action.payload
+    },
+    setHasUpdatedAnyField(state, action: PayloadAction<boolean>){
+      state.hasUpdatedAnyField = action.payload
+    },
+    setSkills(state, action: PayloadAction<ISkill[]>){
+      state.skills = action.payload
     }
   },
   extraReducers: (builder) => {
@@ -61,7 +72,60 @@ export const ProfileSlice = createSlice({
         }
         state.editProfile = null;
       }
-    )
+    );
+    builder.addMatcher(
+      skillApi.endpoints.updateTechnology.matchFulfilled,
+      (state, {payload}) => {
+        if(payload.IsSuccess){
+          state.editProfile!.Technologies = payload.Data;
+        }
+        else {
+          state.editProfile!.Technologies = [];
+        }
+      }
+    );
+    builder.addMatcher(
+      skillApi.endpoints.updateTechnology.matchRejected,
+      (state, action) => {
+        const apiError = action.payload?.data;
+        if (apiError) {
+          console.log(apiError.Message);
+        }
+        state.editProfile!.Technologies = [];
+      }
+    );
+    builder.addMatcher(
+      skillApi.endpoints.createSkill.matchFulfilled,
+      (state, {payload}) => {
+        if(payload.IsSuccess){
+          state.editProfile!.Skills = [...(state.editProfile!.Skills || []), payload.Data];
+        }
+      }
+    );
+    builder.addMatcher(
+      skillApi.endpoints.createSubSkill.matchFulfilled,
+      (state, {payload}) => {
+        if(payload.IsSuccess){
+          const skill = current(state.editProfile?.Skills)?.find(
+            x => x.UniqueCode === payload.Data.SkillUniqueCode
+          );
+
+          if (skill) {
+            const finalSkillArray = (state.editProfile?.Skills || []).map(x => {
+              if(x.UniqueCode === payload.Data.SkillUniqueCode){
+                x.Skills = [...(x.Skills || []), payload.Data.SubSkill]
+              }
+
+              return x;
+            });
+
+            state.editProfile!.Skills = finalSkillArray
+
+            state.skills = finalSkillArray
+          }
+        }
+      }
+    );
   },
 });
 

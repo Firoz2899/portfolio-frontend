@@ -28,15 +28,11 @@ export const useAppActions = () => {
   const dispatch = useAppDispatch();
 
   return useMemo(
-    () =>
-      bindActionCreators(
-        {
-          ...appActions,
-          ...authActions,
-          ...profileActions
-        },
-        dispatch
-      ),
+    () =>({
+      app: bindActionCreators(appActions, dispatch),
+      auth: bindActionCreators(authActions, dispatch),
+      profile: bindActionCreators(profileActions, dispatch),
+    }),
     [dispatch]
   );
 };

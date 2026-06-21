@@ -10,41 +10,6 @@ interface IAxiosBaseQuery {
   params?: Record<string, string>
 }
 
-// export const axiosBaseQuery = (): BaseQueryFn<
-//   IAxiosBaseQuery | string,
-//   ApiResponse,
-//   {
-//     status?: number;
-//     data?: ApiResponse;
-//   }
-// > => async (payload) => {
-//     const { url, method, data, params } = typeof payload === "string" ? {
-//       url: payload,
-//       method: 'GET' as const,
-//       data: undefined,
-//       params: undefined
-//     } : payload;
-
-//     try {
-//       const result = await axiosInstance({
-//         url,
-//         method,
-//         data,
-//         params,
-//       });
-      
-//       return { data: result.data };
-//     } catch (axiosError: any) {
-//       return {
-//         error: {
-//           status: axiosError.response?.status,
-//           data: axiosError.response?.data || axiosError.message,
-//         },
-//       };
-//     }
-//   };
-
-
 export const axiosBaseQuery = (): BaseQueryFn<
   IAxiosBaseQuery | string,
   ApiResponse,
@@ -63,7 +28,7 @@ export const axiosBaseQuery = (): BaseQueryFn<
         : payload;
 
     try {
-      const response = await axiosInstance({
+      const response = await axiosInstance!({
         url: request.url,
         method: request.method,
         data: request.data,

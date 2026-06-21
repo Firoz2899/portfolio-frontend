@@ -23,7 +23,8 @@ import type { UpdateProfileForm } from '@/types/payload.types';
 export default function About() {
   const {isDarkMode: darkMode} = useThemeMode()
   const {editProfile: profileData, shouldRefreshProfile} = useAppSelector(x => x.profile)
-  const {setShouldRefreshProfile} = useAppActions()
+  const {profile} = useAppActions()
+  const {setShouldRefreshProfile} = profile
   const [updateProfile] = profileApiHooks.useUpdateProfileMutation()
   const { showAlert } = useAlert();
   const [newHobby, setNewHobby] = useState("");

@@ -13,6 +13,7 @@ export const apiUrls = {
     skills: {
         createSkill: "/api/v1/skills",
         updateSkill: "/api/v1/skills/:uniqueCode",
+        createSubSkill: "/api/v1/skills/:uniqueCode/subskills",
         deleteSkill: "/api/v1/skills/:uniqueCode",
         getSkillByCode: "/api/v1/skills/details/:uniqueCode",
         profileSkills: "/api/v1/skills/profile-skills"
@@ -61,7 +62,8 @@ export const apiUrls = {
         uploadProfileImage: "/api/v1/profiles/profile-image",
         deleteProfileImage: "/api/v1/profiles/profile-image",
         uploadCoverImage: "/api/v1/profiles/cover-image",
-        deleteCoverImage: "/api/v1/profiles/cover-image"
+        deleteCoverImage: "/api/v1/profiles/cover-image",
+        updateTechnologies: "/api/v1/profiles/update-technologies"
     },
     settings: {
         getSiteSettings: "/api/v1/settings",

@@ -3,7 +3,7 @@ import { motion } from 'framer-motion'
 import {useMemo, type MouseEvent} from 'react'
 import { FaBars, FaMoon, FaSearch, FaSignOutAlt, FaSun, FaTimes } from 'react-icons/fa'
 import { NavigationSidebarItem } from '../NavigationSidebarItem'
-import { navigationItems } from '@/tempData/NavigationItems'
+import { navigationItems } from '@/constants'
 import { authApiHooks, executeMutation } from '@/services'
 import { useAlert } from '../Alert'
 import { useNavigate } from 'react-router-dom'
@@ -17,7 +17,8 @@ export default function AdminSidebar() {
   const navigate = useNavigate()
   const {sidebarOpen, searchQuery} = useAppSelector(x => x.app)
   const {user} = useAppSelector(x => x.auth)
-  const {toggleSidebar, setSearchQuery} = useAppActions()
+  const {app} = useAppActions()
+  const {toggleSidebar, setSearchQuery} = app
     const dashboardRoute = getRoute(RouteNames.public.Dashboard)
 
     const defaultProfileImage = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80";

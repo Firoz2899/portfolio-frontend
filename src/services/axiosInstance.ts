@@ -1,4 +1,4 @@
-import axios, { type AxiosInstance as axiosInstanceType } from "axios";
+import axios from "axios";
 import {
   ApiErrorTypes,
   apiUrls,
@@ -7,9 +7,11 @@ import {
 } from "@/constants";
 
 import { logout } from "@/utils";
-import { router } from "@/App";
 
-export let axiosInstance: axiosInstanceType | null = null;
+export const axiosInstance = axios.create({
+  baseURL: config.apiBaseUrl,
+  withCredentials: true,
+});
 
 
 let isRefreshing = false;
@@ -37,10 +39,7 @@ const processQueue = (
 
 
 export const setupAxiosInstance = (store: any) => {
-  axiosInstance = axios.create({
-    baseURL: config.apiBaseUrl,
-    withCredentials: true,
-  });
+
 
   axiosInstance.interceptors.request.use(
     (config) => {

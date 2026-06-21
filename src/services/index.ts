@@ -4,3 +4,4 @@ export * from './api'
 export * from "./authApi"
 export * from "./profileApi"
 export * from "./slugApi"
+export * from "./skillApi"

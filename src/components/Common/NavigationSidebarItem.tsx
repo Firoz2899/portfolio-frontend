@@ -7,7 +7,8 @@ import type { INavigationItem } from '@/types/constants.types';
 
 export function NavigationSidebarItem({item}: {item: INavigationItem}) {
     const {activeTab} = useAppSelector(x => x.app)
-    const {setActiveTab, setSidebarOpen} = useAppActions()
+    const {app} = useAppActions()
+    const {setActiveTab, setSidebarOpen} = app;
     const eleRef = useRef<HTMLButtonElement>(null!);
     const isHovered = useHover<HTMLButtonElement>(eleRef)
   return (

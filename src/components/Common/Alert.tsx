@@ -1,12 +1,18 @@
 import { createContext, useContext, useState } from 'react';
 import { CheckCircle, Info, AlertTriangle } from 'lucide-react';
+import { Toaster, toast, type ToasterProps } from "sonner";
+import { useThemeMode } from '@/hooks';
 
 interface IAlertContext {
  showAlert: (newAlert: IShowAlertProps) => void;
+ showAlertMessage: (isSuccess: boolean, message: string) => void;
+ showConfirmation: (props: IConfirmationAlertProps) => void;
 }
 
 const AlertContext = createContext<IAlertContext>({
-  showAlert: () => {}
+  showAlert: () => {},
+  showAlertMessage: () => {},
+  showConfirmation: () => {}
 });
 
 export function useAlert() {
@@ -22,16 +28,50 @@ interface IShowAlertProps {
   message: string;
 }
 
+interface IConfirmationAlertProps {
+  title: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  onConfirm: () => void;
+}
+
 interface AlertProps {
   children: React.ReactNode;
 }
 
 export const AlertProvider : React.FC<AlertProps> = ({ children }) => {
+  const {mode} = useThemeMode()
   const [alert, setAlert] = useState<IShowAlertProps | null>(null);
 
   const showAlert = (newAlert: IShowAlertProps) => {
     setAlert(newAlert);
     setTimeout(() => setAlert(null), 5000);
+  };
+
+  const showAlertMessage = (isSuccess: boolean, message: string) => {
+    setAlert({
+      type: isSuccess ? "success" : "error",
+      message
+    });
+    setTimeout(() => setAlert(null), 5000);
+  };
+
+  const showConfirmation = ({
+    title,
+    confirmLabel = "Confirm",
+    cancelLabel = "Cancel",
+    onConfirm,
+  }: IConfirmationAlertProps) => {
+    toast.warning(title, {
+      action: {
+        label: confirmLabel,
+        onClick: onConfirm,
+      },
+      cancel: {
+        label: cancelLabel,
+        onClick: () => {},
+      },
+    });
   };
 
   const iconMap = {
@@ -47,7 +87,7 @@ export const AlertProvider : React.FC<AlertProps> = ({ children }) => {
   } as Record<string, string>;
 
   return (
-    <AlertContext.Provider value={{ showAlert }}>
+    <AlertContext.Provider value={{ showAlert, showAlertMessage, showConfirmation }}>
       {children}
 
       {alert && (
@@ -60,6 +100,7 @@ export const AlertProvider : React.FC<AlertProps> = ({ children }) => {
           </div>
         </div>
       )}
+      <Toaster theme={mode as ToasterProps['theme']} />
     </AlertContext.Provider>
   );
 }

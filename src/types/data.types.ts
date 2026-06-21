@@ -8,6 +8,7 @@ export interface IProfile {
   Email: string;
   Phone: string;
   Designation: string;
+  Technologies: string[],
   Hobbies: string[],
   Language: ILanguage[],
   Availability: string;
@@ -145,6 +146,7 @@ export interface ISigninRes {
 
 }
 
-// export interface IMeRes {
-//   user
-// }
+export interface ICreateSubSkillRes {
+  SkillUniqueCode: string;
+  SubSkill: ISubSkill;
+}

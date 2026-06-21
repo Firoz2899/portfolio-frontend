@@ -1,4 +1,3 @@
-import About from '@/components/Views/EditProfile/About';
 import type { INavigationItem } from '@/types/constants.types';
 import loadable from '@loadable/component';
 import {
@@ -10,6 +9,10 @@ import {
   FaDragon, FaKiwiBird, FaHorse, FaFish, FaSpider, FaBug, FaCat, FaDog, FaCrow,
   FaImages, FaUsers, FaMusic
 } from 'react-icons/fa';
+import {
+  AboutSectionLoader, 
+  EditSkillSectionLoader
+} from "@/components/Common/Loaders"
 
 export const navigationItems: INavigationItem[] = [
     {
@@ -29,7 +32,9 @@ export const navigationItems: INavigationItem[] = [
       color: 'from-blue-400 to-sky-500',
       accent: 'blue',
       natureIcon: <FaLeaf />,
-      component: loadable(x => import("@/components/Views/EditProfile/About"))
+      component: loadable(_ => import("@/components/Views/EditProfile/About/About"), {
+        fallback: <AboutSectionLoader/>
+      })
     },
     {
       id: 'hero',
@@ -65,7 +70,10 @@ export const navigationItems: INavigationItem[] = [
       description: 'Technical abilities',
       color: 'from-rose-400 to-pink-500',
       accent: 'rose',
-      natureIcon: <FaDragon />
+      natureIcon: <FaDragon />,
+      component: loadable(_ => import("@/components/Views/EditProfile/Skills/Skills"), {
+        fallback: <EditSkillSectionLoader/>
+      })
     },
     {
       id: 'projects',

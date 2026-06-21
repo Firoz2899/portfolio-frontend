@@ -25,13 +25,13 @@ export const signUpSchema = z
     ConfirmPassword: z.string(),
     AgreeTerms: z.boolean().refine(
       (val) => val === true,
-      { message: "You must accept the terms and conditions" }
+      { error: "You must accept the terms and conditions" }
     ),
   })
   .refine(
     (data) => data.Password === data.ConfirmPassword,
     {
-      message: "Passwords do not match",
+      error: "Passwords do not match",
       path: ["ConfirmPassword"],
     }
   );
@@ -40,7 +40,7 @@ export type SignUpFormData = z.infer<typeof signUpSchema>;
 
 export const signInSchema = z.object({
   Email: z.email("Invalid email format"),
-  Password: z.string({message: "Password is required"}),
+  Password: z.string({error: "Password is required"}),
   RememberMe: z.boolean()
 })
 

@@ -9,7 +9,8 @@ type ThemeMode = "light" | "dark";
 export  function useThemeMode() {
   const prefersDark = useMediaQuery('(prefers-color-scheme: dark)')
   const [mode, setMode] = useLocalStorage<ThemeMode | null>(localStorageKeys.themeMode, null)
-  const {setThemeMode} = useAppActions()
+  const {app} = useAppActions()
+  const {setThemeMode} = app
 
   // Effective mode
   const currentMode: ThemeMode = mode ?? (prefersDark ? "dark" : "light");
