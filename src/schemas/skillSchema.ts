@@ -24,3 +24,32 @@ export const addTechnologySchema = z.object({
 })
 
 export type AddTechnologySchemaFormData = z.infer<typeof addTechnologySchema>;
+
+export const subSkillSchema = z.object({
+  UniqueCode: z.string().optional(),
+  Name: z
+    .string()
+    .trim()
+    .min(1, "Skill name is required"),
+  Percentage: z.coerce
+    .number({error: "Percentage must be a number"})
+    .min(0, "Percentage cannot be less than 0")
+    .max(100, "Percentage cannot be more than 100"),
+});
+
+export const updateSkillSchema = z.object({
+  UniqueCode: z.string(),
+  Title: z
+    .string()
+    .trim()
+    .min(1, "Category title is required"),
+  Icon: z
+    .string()
+    .trim()
+    .min(1, "Icon is required"),
+  Skills: z
+    .array(subSkillSchema)
+    // .min(1, "At least one skill is required"),
+});
+
+export type UpdateSkillFormData = z.infer<typeof updateSkillSchema>;

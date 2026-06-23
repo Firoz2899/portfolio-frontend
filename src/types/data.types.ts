@@ -90,8 +90,19 @@ export interface ISubSkill {
   Percentage: number;
 }
 
+
 export interface IExperience {
-  [key: string]: any;
+  UniqueCode?: string;
+  ProfileUniqueCode: string;
+  Company: string;
+  Position: string;
+  Address?: IAddress;
+  Phone?: string;
+  Website?: string;
+  StartDate?: Date;
+  EndDate?: Date;
+  Description?: string;
+  Achievements: string[];
 }
 
 export interface IService {
@@ -105,18 +116,6 @@ export interface IProject {
 export interface IContact {
   [key: string]: any;
 }
-
-// export interface IProject {
-//   ProjectCode: string;
-//   Title: string;
-//   Slug: string;
-//   ShortDescription: string;
-//   Description: string;
-//   CoverImage: string;
-//   WebsiteUrl: string;
-//   GithubUrl: string;
-//   IsFeatured: boolean;
-// }
 
 export interface IUser {
   FirstName: string;

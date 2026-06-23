@@ -1,4 +1,3 @@
-// components/Skills.js
 import { useEffect } from 'react';
 import { FaLeaf, FaPlus, FaTrash } from 'react-icons/fa';
 import { useAppActions, useAppSelector, useThemeMode } from '@/hooks';

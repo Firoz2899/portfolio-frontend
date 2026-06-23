@@ -13,7 +13,7 @@ interface IProfileState {
   profile: IProfile | null;
   shouldRefreshProfile: boolean;
   hasUpdatedAnyField: boolean;
-  skills: ISkill[]
+  skills: ISkill[];
 }
 
 const initialState : IProfileState = {

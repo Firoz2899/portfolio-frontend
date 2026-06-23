@@ -41,3 +41,32 @@ export const ROLE_HIERARCHY = {
         Roles.SUPERADMIN
     ],
 };
+
+export const DATE_FORMATS = {
+  DATE: "dd/MM/yyyy",
+  DATE_US: "MM/dd/yyyy",
+
+  SHORT_DATE: "dd MMM yyyy",
+  LONG_DATE: "dd MMMM yyyy",
+
+  MONTH_YEAR: "MMM yyyy",
+  MONTH_YEAR_FULL: "MMMM yyyy",
+
+  YEAR_MONTH: "yyyy-MM",
+  YEAR: "yyyy",
+
+  TIME_12: "hh:mm a",
+  TIME_24: "HH:mm",
+
+  DATE_TIME: "dd/MM/yyyy hh:mm a",
+  DATE_TIME_24: "dd/MM/yyyy HH:mm",
+
+  ISO_DATE: "yyyy-MM-dd",
+  ISO_DATE_TIME: "yyyy-MM-dd'T'HH:mm:ss",
+
+  DAY_DATE: "EEEE, dd MMM yyyy",
+  DAY_MONTH: "EEEE, dd MMMM",
+
+  MONTH_DAY_YEAR: "MMM dd, yyyy",
+  FULL: "EEEE, dd MMMM yyyy hh:mm a",
+} as const;

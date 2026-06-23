@@ -6,6 +6,7 @@ interface IHookFormFieldProps
     extends PropsWithChildren {
   label: string;
   labelClassName?: string;
+  formItemClassName?: string;
   errorClassName?: string; 
   childrenContainerClassName?: string; 
   startAdornment?: React.ReactNode;
@@ -15,6 +16,7 @@ interface IHookFormFieldProps
 export function HookFormField({
   label,
   labelClassName,
+  formItemClassName,
   errorClassName,
   childrenContainerClassName,
   startAdornment,
@@ -23,7 +25,7 @@ export function HookFormField({
 }: IHookFormFieldProps) {
   return (
     <FormItem>
-      <div>
+      <div className={cn(formItemClassName)}>
         <FormLabel className={cn(labelClassName)}>{label}</FormLabel>
 
           <div className="relative">

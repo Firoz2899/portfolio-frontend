@@ -1,2 +1,5 @@
 export * from './authSchema'
+export * from './addressSchema'
 export * from './profileSchema'
+export * from './skillSchema'
+export * from './experienceSchema'
