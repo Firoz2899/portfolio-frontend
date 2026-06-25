@@ -1,3 +1,3 @@
-export * from './appSlice'
-export * from './authSlice'
-export * from './profileSlice'
+export * from './app'
+export * from './auth'
+export * from './profile'

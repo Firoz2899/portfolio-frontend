@@ -1,7 +1,7 @@
 import type { ApiResponse } from "@/types/common.types";
 import {apiUrls} from '@/constants'
 import { api } from "@/services";
-import type { ICreateSubSkillRes, ISkill, ISubSkill } from "@/types/data.types";
+import type { ICreateSubSkillRes, ISkill } from "@/types/data.types";
 
 const {profiles, skills, UniqueCodekeys} = apiUrls
 

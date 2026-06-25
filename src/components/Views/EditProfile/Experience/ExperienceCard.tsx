@@ -2,16 +2,18 @@ import { DATE_FORMATS } from '@/constants';
 import { useThemeMode } from '@/hooks';
 import type { IExperience } from '@/types/data.types';
 import { formatDate } from '@/utils/basic-helpers';
-import { FaBuilding, FaCalendarAlt, FaGlobe, FaMapMarkerAlt, FaPhone, FaTrash, FaTrophy } from 'react-icons/fa'
+import { FaBuilding, FaCalendarAlt, FaEdit, FaGlobe, FaMapMarkerAlt, FaPhone, FaTrash, FaTrophy } from 'react-icons/fa'
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
 
 interface IExperienceCardProps {
-    data: IExperience
+    data: IExperience;
+    onEdit: () => void;
 }
 
 export default function ExperienceCard({
-    data
+    data,
+    onEdit
 }: IExperienceCardProps) {
 
     const MySwal = withReactContent(Swal);
@@ -44,18 +46,28 @@ export default function ExperienceCard({
     const cardBgClass = isDarkMode ? 'bg-gray-800' : 'bg-white';
     const tealTextClass = isDarkMode ? 'text-teal-400' : 'text-teal-600';
     const redHoverClass = isDarkMode ? 'hover:bg-red-900/30' : 'hover:bg-red-50';
+    const greenHoverClass = isDarkMode ? 'hover:bg-green-900/30' : 'hover:bg-green-50';
     
     return (
         <div key={data.UniqueCode} className={`rounded-xl p-5 border shadow-sm ${cardBgClass} ${borderClass}`}>
             <div className="flex justify-between items-start mb-3">
                 <h3 className={`text-xl font-semibold ${textClass}`}>{data.Position}</h3>
-                <button
-                    onClick={handleDeleteClick}
-                    className={`p-2 rounded-full ${textMutedClass} ${redHoverClass} transition-colors`}
-                    title="Delete Experience"
-                >
-                    <FaTrash />
-                </button>
+                <div className='flex justify-end'>
+                    <button
+                        onClick={onEdit}
+                        className={`p-2 rounded-full ${textMutedClass} ${greenHoverClass} transition-colors`}
+                        title="Edit Experience"
+                    >
+                        <FaEdit />
+                    </button>
+                    <button
+                        onClick={handleDeleteClick}
+                        className={`p-2 rounded-full ${textMutedClass} ${redHoverClass} transition-colors`}
+                        title="Delete Experience"
+                    >
+                        <FaTrash />
+                    </button>
+                </div>
 
             </div>
 

@@ -1,22 +1,10 @@
 import { localStorageKeys } from "@/constants";
+import type { AppState, ThemeMode } from "@/types/state.types";
 import {
   createSlice,
   type PayloadAction,
 } from "@reduxjs/toolkit";
 
-type ThemeMode = "light" | "dark";
-type ViewModeType = "grid" | "list";
-
-interface AppState {
-  themeMode: ThemeMode | null;
-  routeName: string;
-  searchQuery: string;
-  headerSearch: string;
-  viewMode: ViewModeType;
-  activeTab: string;
-  mobileMenuOpen: boolean;
-  sidebarOpen: boolean;
-}
 
 const initialState: AppState = {
   themeMode: localStorage.getItem(localStorageKeys.themeMode) as ThemeMode || null,

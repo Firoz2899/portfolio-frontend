@@ -11,7 +11,8 @@ import {
 } from 'react-icons/fa';
 import {
   AboutSectionLoader, 
-  EditSkillSectionLoader
+  EditSkillSectionLoader,
+  ExperienceSectionLoader
 } from "@/components/Common/Loaders"
 
 export const navigationItems: INavigationItem[] = [
@@ -52,7 +53,10 @@ export const navigationItems: INavigationItem[] = [
       description: 'Work history',
       color: 'from-amber-400 to-orange-500',
       accent: 'amber',
-      natureIcon: <FaTree />
+      natureIcon: <FaTree />,
+      component: loadable(_ => import("@/components/Views/EditProfile/Experience/Experience"), {
+        fallback: <ExperienceSectionLoader/>
+      })
     },
     {
       id: 'education',

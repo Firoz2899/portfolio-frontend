@@ -1,23 +1,38 @@
+import { TextField } from '@mui/material';
+import Autocomplete from '@mui/material/Autocomplete';
+import { Country, State, type ICountry, type IState } from 'country-state-city';
 import { useState, useRef, useEffect, useMemo } from 'react';
-import { FaPlus, FaTrash, FaSave, FaCalendarAlt, FaBuilding, FaMapMarkerAlt, FaPhone, FaGlobe, FaUserTie, FaCity, FaFlag, FaEnvelope, FaTrophy } from 'react-icons/fa';
-import { useFieldArray, useForm, useWatch } from "react-hook-form";
-import { useDispatch } from 'react-redux';
-import { useAlert } from "../../../Common/Alert";
-import Flatpickr from "react-flatpickr";
+import { FaPlus, FaTrash, FaSave, FaCalendarAlt, FaBuilding, FaMapMarkerAlt, FaPhone, FaGlobe, FaUserTie, FaEnvelope, FaTrophy } from 'react-icons/fa';
+import { useForm, useWatch } from "react-hook-form";
+import Flatpickr, { type OptionsType } from "react-flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import monthSelectPlugin from 'flatpickr/dist/plugins/monthSelect/index';
 import 'flatpickr/dist/plugins/monthSelect/style.css';
-import Swal from 'sweetalert2';
-import withReactContent from 'sweetalert2-react-content';
 import { useAppSelector, useThemeMode } from '@/hooks';
 import ExperienceCard from './ExperienceCard';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { experienceSchema, type ExperienceSchemaFormData } from '@/schemas';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, HookFormField, useFormField } from '@/components/Common';
-import { unknown } from 'zod';
-import Autocomplete from '@mui/material/Autocomplete';
-import { Country, State, type ICountry, type IState } from 'country-state-city';
-import { TextField } from '@mui/material';
+import { Form, FormField, FormItem, FormLabel, FormMessage, HookFormField, useAlert } from '@/components/Common';
+
+const defaultValues = {
+  UniqueCode: "",
+  Position: "",
+  Company: "",
+  Address: {
+    Country: undefined,
+    State: undefined,
+    City: "",
+    Pincode: "",
+    AddressLine1: "",
+    AddressLine2: "",
+  },
+  StartDate: "",
+  EndDate: "",
+  Phone: "",
+  Website: "",
+  Description: "",
+  Achievements: [""],
+};
 
 
 export default function Experience() {
@@ -27,19 +42,14 @@ export default function Experience() {
   const { showAlert } = useAlert();
 
   const form = useForm<ExperienceSchemaFormData>({
-    resolver: zodResolver(experienceSchema)
+    resolver: zodResolver(experienceSchema),
+    defaultValues
   })
   const { handleSubmit, control, formState, reset, setValue } = form;
-  const {fields, remove, append} = useFieldArray({
-    control,
-    name: "Achievements"
-  })
-
+  const achievements = useWatch({control, name: "Achievements"}) || [];
   const selectedCountry = useWatch({ control, name: "Address.Country" })
-  const selectedState = useWatch({ control, name: "Address.State" })
 
   const countries = useMemo(() => Country.getAllCountries(), []);
-
   const states = useMemo(() => {
     if (!selectedCountry) return [];
     return State.getStatesOfCountry(selectedCountry.Code);
@@ -49,10 +59,10 @@ export default function Experience() {
     if(!selectedCountry){
       setValue("Address.State", undefined)
     }
-  }, [selectedCountry, selectedState])
+  }, [selectedCountry])
   
-  const [startPeriod, setStartPeriod] = useState(null);
-  const [endPeriod, setEndPeriod] = useState(null);
+  const [startPeriod, setStartPeriod] = useState<Date | null | undefined>(null);
+  const [endPeriod, setEndPeriod] = useState<Date | null | undefined>(null);
 
   // Refs for Flatpickr instances
   const startDateRef = useRef(null);
@@ -70,18 +80,41 @@ export default function Experience() {
       })
     ],
     onChange: (selectedDates, dateStr, instance) => {
-      if (instance === startDateRef.current?.flatpickr) {
+      if (instance === (startDateRef.current as any)?.flatpickr) {
         setStartPeriod(selectedDates[0]);
-        setValue("StartPeriod", dateStr);
-      } else if (instance === endDateRef.current?.flatpickr) {
+        setValue("StartDate", dateStr, {
+          shouldValidate: true,
+          shouldDirty: true,
+          shouldTouch: true,
+        });
+      } else if (instance === (endDateRef.current as any)?.flatpickr) {
         setEndPeriod(selectedDates[0]);
-        setValue("EndPeriod", dateStr);
+        setValue("EndDate", dateStr, {
+          shouldValidate: true,
+          shouldDirty: true,
+          shouldTouch: true,
+        });
       }
     }
+  } as OptionsType ;
+
+  const addAchievement = () => {
+    setValue("Achievements", [...achievements, ""], {
+      shouldValidate: true,
+    });
+  };
+
+  const removeAchievement = (index: number) => {
+    setValue(
+      "Achievements",
+      achievements.filter((_, i) => i !== index),
+      { shouldValidate: true }
+    );
   };
 
   // Save all changes
   const handleSave = handleSubmit(async (data) => {
+    console.log("🚀 ~ Experience.tsx:117 ~ Experience ~ data:", data);
     try {
       
       showAlert({
@@ -90,7 +123,7 @@ export default function Experience() {
       });
 
       // Reset form
-      reset();
+      reset(defaultValues);
       // setNewExperience(experienceObj);
       setStartPeriod(null);
       setEndPeriod(null);
@@ -101,9 +134,6 @@ export default function Experience() {
         type: "error",
         message: "A network error occurred. Please check your connection and try again.",
       });
-    }
-    finally {
-      // dispatch(setRefresh());
     }
   });
 
@@ -376,7 +406,7 @@ export default function Experience() {
                 <FormField 
                   control={control}
                   name='EndDate'
-                  render={({field}) => (
+                  render={({field: {value, ...rest}}) => (
                     <FormItem>
                       <div>
                         <FormLabel className={inputLabelClassName}>End Period</FormLabel>
@@ -385,7 +415,7 @@ export default function Experience() {
                             ref={endDateRef}
                             options={{
                               ...flatpickrOptions,
-                              defaultDate: endPeriod
+                              defaultDate: endPeriod ?? undefined
                             }}
                             className={inputClassName}
                             placeholder="Jan 2025"
@@ -394,7 +424,8 @@ export default function Experience() {
                         </div>
                         <input
                           type="hidden"
-                          {...field}
+                          value={value ?? ""}
+                          {...rest}
                         />
                         <FormMessage/>
                       </div>
@@ -450,25 +481,26 @@ export default function Experience() {
                   <button
                     onClick={(e) => {
                       e.preventDefault();
-                      append(unknown)
+                      addAchievement()
                     }}
                     className="px-4 py-2 bg-teal-500 text-white rounded-lg hover:bg-teal-600 transition-colors flex items-center"
                   >
                     <FaPlus className="mr-2" /> Add Achievements
                   </button>
                 </div>
-                {fields?.map((achievement, index) => (
+                
+                {achievements?.map((_, index) => (
                   <div key={index} className="flex items-center mb-2">
                     <FormField
                       control={control}
                       name={`Achievements.${index}`}
                       render={({field}) => (
-                        <FormItem>
+                        <FormItem className='flex-1'>
                           <div className="relative flex-1">
                             <FaTrophy className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
                             <input
                               {...field}
-                              className={inputLabelClassName}
+                              className={inputClassName}
                               placeholder="Achievement description"
                             />
                           </div>
@@ -481,9 +513,9 @@ export default function Experience() {
                       type="button"
                       onClick={(e) => {
                         e.preventDefault();
-                        remove(index)
+                        removeAchievement(index)
                       }}
-                      disabled={fields.length <= 1}
+                      disabled={achievements.length <= 1}
                       className={`ml-2 p-2 rounded-full disabled:opacity-25 disabled:cursor-not-allowed ${textMutedClass} ${redHoverClass}`}
                     >
                       <FaTrash />
@@ -528,7 +560,9 @@ export default function Experience() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {(editProfile?.Experiences || []).map((exp) => (
-                <ExperienceCard key={exp.UniqueCode} data={exp} />
+                <ExperienceCard key={exp.UniqueCode} data={exp} onEdit={() => {
+                  reset(exp as any)
+                }} />
               ))}
             </div>
           )}
