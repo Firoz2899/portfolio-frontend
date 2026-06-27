@@ -1,7 +1,11 @@
+import { useAlert } from '@/components/Common';
 import { DATE_FORMATS } from '@/constants';
 import { useThemeMode } from '@/hooks';
+import { executeMutation, experienceApiHooks } from '@/services';
 import type { IExperience } from '@/types/data.types';
 import { formatDate } from '@/utils/basic-helpers';
+import { Loader2 } from 'lucide-react';
+import { useState } from 'react';
 import { FaBuilding, FaCalendarAlt, FaEdit, FaGlobe, FaMapMarkerAlt, FaPhone, FaTrash, FaTrophy } from 'react-icons/fa'
 import Swal from 'sweetalert2';
 import withReactContent from 'sweetalert2-react-content';
@@ -17,26 +21,41 @@ export default function ExperienceCard({
 }: IExperienceCardProps) {
 
     const MySwal = withReactContent(Swal);
+    const {showAlertMessage, showConfirmation} = useAlert()
     const {isDarkMode} = useThemeMode()
+    const [deleteExperience] = experienceApiHooks.useDeleteExperienceMutation()
+    const [loading, setLoading] = useState<boolean>(false)
 
-  const handleDeleteClick = async () => {
-    const result = await MySwal.fire({
-      title: 'Are you sure?',
-      text: "This will permanently delete this experience.",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#3085d6',
-      confirmButtonText: 'Yes, delete it!',
-      cancelButtonText: 'No, keep it'
-    });
+    const handleDeleteClick = async () => {
+        // showConfirmation({
+        //     title: 'Are you sure? "This will permanently delete this experience.',
+        //     confirmLabel: 'Yes, delete it!',
+        //     cancelLabel: 'No, keep it',
+        //     onConfirm: async () => {
+        //         setLoading(true)
+        //         const res = await executeMutation(deleteExperience({UniqueCode: data.UniqueCode!}).unwrap());
+        //         showAlertMessage(res.IsSuccess, res.Message)
+        //         setLoading(false)
+        //     }
+        // })
+        const result = await MySwal.fire({
+            title: 'Are you sure?',
+            text: "This will permanently delete this experience.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#3085d6',
+            confirmButtonText: 'Yes, delete it!',
+            cancelButtonText: 'No, keep it'
+        });
 
-    if (result.isConfirmed) {
-      
-    } else {
-      // user cancelled
-    }
-  };
+        if (result.isConfirmed) {
+            setLoading(true)
+            const res = await executeMutation(deleteExperience({UniqueCode: data.UniqueCode!}).unwrap());
+            showAlertMessage(res.IsSuccess, res.Message)
+            setLoading(false)
+        }
+    };
 
     // Theme classes
     const textClass = isDarkMode ? 'text-gray-200' : 'text-gray-800';
@@ -52,8 +71,8 @@ export default function ExperienceCard({
         <div key={data.UniqueCode} className={`rounded-xl p-5 border shadow-sm ${cardBgClass} ${borderClass}`}>
             <div className="flex justify-between items-start mb-3">
                 <h3 className={`text-xl font-semibold ${textClass}`}>{data.Position}</h3>
-                <div className='flex justify-end'>
-                    <button
+                <div className='flex justify-end  space-x-2'>
+                    {/* <button
                         onClick={onEdit}
                         className={`p-2 rounded-full ${textMutedClass} ${greenHoverClass} transition-colors`}
                         title="Edit Experience"
@@ -65,7 +84,25 @@ export default function ExperienceCard({
                         className={`p-2 rounded-full ${textMutedClass} ${redHoverClass} transition-colors`}
                         title="Delete Experience"
                     >
-                        <FaTrash />
+                        {loading ? <Loader2 className='animate-spin' /> : <FaTrash />}
+                    </button> */}
+                    <button
+                        type='button'
+                        aria-label='Experience edit click'
+                        onClick={onEdit}
+                        className="p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                    >
+                        <FaEdit />
+                    </button>
+                    <button
+                        type='button'
+                        aria-label='Delete Experience'
+                        onClick={handleDeleteClick}
+                        className="p-2 bg-red-500 text-white rounded-lg hover:bg-red-600 transition-colors"
+                    >
+                        {loading 
+                            ? <Loader2 className='animate-spin'/> 
+                            : <FaTrash />}
                     </button>
                 </div>
 
@@ -78,8 +115,8 @@ export default function ExperienceCard({
                 <p className={`flex items-center mt-1 ${textMutedClass}`}>
                     <FaMapMarkerAlt className="mr-2" /> {[
                         data.Address?.City,
-                        data.Address?.State.Name,
-                        data.Address?.Country.Name
+                        data.Address?.State?.Name,
+                        data.Address?.Country?.Name
                     ].filter(Boolean).join(", ")}
                 </p>
             </div>
@@ -91,7 +128,7 @@ export default function ExperienceCard({
                         date: data.StartDate,
                         formatString: DATE_FORMATS.MONTH_YEAR
                     })} - {formatDate({
-                        date: data.EndDate,
+                        date: data?.EndDate,
                         formatString: DATE_FORMATS.MONTH_YEAR,
                         defaultValue: 'Present'
                     })}

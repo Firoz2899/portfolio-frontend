@@ -7,7 +7,7 @@ const {experiences, UniqueCodekeys} = apiUrls
 
 export const experienceApi = api.injectEndpoints({
   endpoints: (builder) => ({
-    createExperience: builder.mutation<ApiResponse<IExperience>, {Title: string, Icon: string}>({
+    createExperience: builder.mutation<ApiResponse<IExperience>, IExperience>({
       query: (data) => ({
         url: experiences.createExperience,
         method: "POST",

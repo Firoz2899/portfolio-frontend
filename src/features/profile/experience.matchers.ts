@@ -2,7 +2,7 @@ import { type ActionReducerMapBuilder } from "@reduxjs/toolkit";
 import { experienceApi, profileApi } from "@/services";
 import type { IProfileState } from "@/types/state.types";
 
-export const addProfileMatchers = (
+export const addExperienceMatchers = (
   builder: ActionReducerMapBuilder<IProfileState>
 ) => {
     builder.addMatcher(

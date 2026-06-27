@@ -7,8 +7,7 @@ import {
 import type { IProfile, ISkill } from "@/types/data.types";
 import { profileApi, skillApi } from "@/services";
 import type { IProfileState } from "@/types/state.types";
-import { addProfileMatchers } from "./profile.matchers";
-import { addSkillMatchers } from "./skill.matchers";
+import { addProfileMatchers, addSkillMatchers, addExperienceMatchers } from ".";
 
 const initialState : IProfileState = {
   isLoading: true,
@@ -45,6 +44,7 @@ export const ProfileSlice = createSlice({
   extraReducers: (builder) => {
     addProfileMatchers(builder);
     addSkillMatchers(builder);
+    addExperienceMatchers(builder);
   },
 });
 

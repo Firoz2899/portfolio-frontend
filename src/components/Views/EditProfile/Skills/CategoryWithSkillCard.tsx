@@ -199,19 +199,47 @@ export default function CategoryWithSkillCard({
                             )
                         }
                         {fields?.map((skill: any, index: any) => (
-                                <div key={skill.UniqueCode}>
-                                    <div className="flex justify-between items-center mb-1 gap-2">
+                            <div key={skill.UniqueCode}>
+                                <div className="flex justify-between items-center mb-1 gap-2">
+                                    {isEditMode && (
+                                        <FormField
+                                            control={form.control}
+                                            name={`Skills.${index}.Name`}
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormControl>
+                                                    <input
+                                                        {...field}
+                                                        className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
+                                                    />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    )} 
+                                    {!isEditMode && (
+                                        <span className="font-medium text-gray-800 dark:text-gray-200">{skill.Name}</span>
+                                    )}
+                                    <div className="flex items-center">
                                         {isEditMode && (
                                             <FormField
                                                 control={form.control}
-                                                name={`Skills.${index}.Name`}
-                                                render={({ field }) => (
+                                                name={`Skills.${index}.Percentage`}
+                                                render={({ field: {onChange, value, ...rest} }) => (
                                                     <FormItem>
                                                         <FormControl>
-                                                        <input
-                                                            {...field}
-                                                            className="w-full px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent dark:bg-gray-700 dark:text-white"
-                                                        />
+                                                            <input
+                                                                type="number"
+                                                                min={0}
+                                                                max={100}
+                                                                value={Number(value)}
+                                                                onChange={(e) =>
+                                                                    onChange(Number(e.target.value))
+                                                                }
+                                                                className="w-16 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent mr-2 dark:bg-gray-700 dark:text-white"
+                                                                {...rest}
+                                                            />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -219,67 +247,38 @@ export default function CategoryWithSkillCard({
                                             />
                                         )} 
                                         {!isEditMode && (
-                                            <span className="font-medium text-gray-800 dark:text-gray-200">{skill.Name}</span>
+                                            <span className="text-sm font-medium text-teal-600 dark:text-teal-400 mr-2">{Number(skill.Percentage)}%</span>
                                         )}
-                                        <div className="flex items-center">
-                                            {isEditMode && (
-                                                <FormField
-                                                    control={form.control}
-                                                    name={`Skills.${index}.Percentage`}
-                                                    render={({ field: {onChange, value, ...rest} }) => (
-                                                        <FormItem>
-                                                            <FormControl>
-                                                                <input
-                                                                    type="number"
-                                                                    min={0}
-                                                                    max={100}
-                                                                    value={Number(value)}
-                                                                    onChange={(e) =>
-                                                                        onChange(Number(e.target.value))
-                                                                    }
-                                                                    className="w-16 px-2 py-1 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent mr-2 dark:bg-gray-700 dark:text-white"
-                                                                    {...rest}
-                                                                />
-                                                            </FormControl>
-                                                            <FormMessage />
-                                                        </FormItem>
-                                                    )}
-                                                />
-                                            )} 
-                                            {!isEditMode && (
-                                                <span className="text-sm font-medium text-teal-600 dark:text-teal-400 mr-2">{Number(skill.Percentage)}%</span>
-                                            )}
-                                            {/* <button
-                                                onClick={() => editingSkill === skill.UniqueCode ? setEditingSkill("") : setEditingSkill(skill.UniqueCode)}
-                                                className="p-1 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full"
-                                            >
-                                                {editingSkill === skill.UniqueCode ? <FaTimes /> : <FaEdit size={12} />}
-                                            </button> */}
-                                            {
-                                                isEditMode && (
-                                                    <button
-                                                        aria-label='Skill delete'
-                                                        onClick={(e) => {
-                                                            e.preventDefault();
-                                                            remove(index)
-                                                        }}
-                                                        className="p-1 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full ml-1"
-                                                    >
-                                                        <FaTrash size={12} />
-                                                    </button>
-                                                )
-                                            }
-                                        </div>
-                                    </div>
-                                    <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 overflow-hidden">
-                                        <div
-                                            className="h-2.5 rounded-full bg-gradient-to-r from-teal-500 to-blue-600"
-                                            style={{ width: `${Number(skill.Percentage)}%` }}
-                                        ></div>
+                                        {/* <button
+                                            onClick={() => editingSkill === skill.UniqueCode ? setEditingSkill("") : setEditingSkill(skill.UniqueCode)}
+                                            className="p-1 text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-full"
+                                        >
+                                            {editingSkill === skill.UniqueCode ? <FaTimes /> : <FaEdit size={12} />}
+                                        </button> */}
+                                        {
+                                            isEditMode && (
+                                                <button
+                                                    aria-label='Skill delete'
+                                                    onClick={(e) => {
+                                                        e.preventDefault();
+                                                        remove(index)
+                                                    }}
+                                                    className="p-1 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full ml-1"
+                                                >
+                                                    <FaTrash size={12} />
+                                                </button>
+                                            )
+                                        }
                                     </div>
                                 </div>
-                            ))
-                        }
+                                <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2.5 overflow-hidden">
+                                    <div
+                                        className="h-2.5 rounded-full bg-gradient-to-r from-teal-500 to-blue-600"
+                                        style={{ width: `${Number(skill.Percentage)}%` }}
+                                    ></div>
+                                </div>
+                            </div>
+                        ))}
                     </div>
                 </form>
             </Form>

@@ -93,14 +93,14 @@ export interface ISubSkill {
 
 export interface IExperience {
   UniqueCode?: string;
-  ProfileUniqueCode: string;
+  ProfileUniqueCode?: string;
   Company: string;
   Position: string;
   Address?: IAddress;
   Phone?: string;
   Website?: string;
-  StartDate?: Date;
-  EndDate?: Date;
+  StartDate?: string;
+  EndDate?: string | null;
   Description?: string;
   Achievements: string[];
 }
