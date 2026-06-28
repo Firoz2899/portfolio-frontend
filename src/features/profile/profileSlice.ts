@@ -1,13 +1,11 @@
 import {
   createSlice,
   type PayloadAction,
-  current
 } from "@reduxjs/toolkit";
 
 import type { IProfile, ISkill } from "@/types/data.types";
-import { profileApi, skillApi } from "@/services";
 import type { IProfileState } from "@/types/state.types";
-import { addProfileMatchers, addSkillMatchers, addExperienceMatchers } from ".";
+import { addProfileMatchers, addSkillMatchers, addExperienceMatchers, addEducationMatchers } from ".";
 
 const initialState : IProfileState = {
   isLoading: true,
@@ -44,6 +42,7 @@ export const ProfileSlice = createSlice({
   extraReducers: (builder) => {
     addProfileMatchers(builder);
     addSkillMatchers(builder);
+    addEducationMatchers(builder);
     addExperienceMatchers(builder);
   },
 });

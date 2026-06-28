@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { addressSchema } from "./addressSchema";
+import { addressSchema, optionalUrl } from "@/schemas";
 
 export const experienceSchema = z.object({
   UniqueCode: z.string().optional(),
@@ -22,19 +22,7 @@ export const experienceSchema = z.object({
     .trim()
     .optional()
     .or(z.literal("")),
-  Website: z
-    .string()
-    .trim()
-    .optional()
-    .or(z.literal(""))
-    .refine(
-      (value) =>
-        !value ||
-        /^https?:\/\/.+/i.test(value),
-      {
-        message: "Please enter a valid website URL",
-      }
-    ),
+  Website: optionalUrl,
   Description: z.string().optional(),
   Achievements: z
     .array(

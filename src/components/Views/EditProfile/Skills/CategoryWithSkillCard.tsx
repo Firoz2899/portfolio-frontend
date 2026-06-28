@@ -7,7 +7,7 @@ import { Briefcase, Loader2 } from 'lucide-react';
 import { FaEdit, FaHiking, FaLeaf, FaMountain, FaSave, FaTimes, FaTrash, FaTree } from 'react-icons/fa';
 import { useForm, useFieldArray, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { updateSkillSchema } from '@/schemas/skillSchema';
+import { updateSkillSchema } from '@/schemas/skill.schema';
 
  // Icon options
   const iconOptions = [

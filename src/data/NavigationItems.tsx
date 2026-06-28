@@ -65,7 +65,10 @@ export const navigationItems: INavigationItem[] = [
       description: 'Academic background',
       color: 'from-emerald-400 to-green-500',
       accent: 'green',
-      natureIcon: <FaKiwiBird />
+      natureIcon: <FaKiwiBird />,
+      component: loadable(_ => import("@/components/Views/EditProfile/Education/Education"), {
+        fallback: <ExperienceSectionLoader/>
+      })
     },
     {
       id: 'skills',

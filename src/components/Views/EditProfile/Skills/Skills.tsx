@@ -3,7 +3,7 @@ import { FaLeaf, FaPlus, FaTrash } from 'react-icons/fa';
 import { useAppActions, useAppSelector, useThemeMode } from '@/hooks';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { addSkillSchema, addSubSkillSchema, addTechnologySchema, type AddSkillSchemaFormData, type AddTechnologySchemaFormData } from '@/schemas/skillSchema';
+import { addSkillSchema, addSubSkillSchema, addTechnologySchema, type AddSkillSchemaFormData, type AddTechnologySchemaFormData } from '@/schemas/skill.schema';
 import { Form, FormField, FormItem, FormMessage, FormControl, FormLabel, useAlert } from '@/components/Common';
 import { Loader2 } from 'lucide-react';
 import CategoryWithSkillCard from './CategoryWithSkillCard';

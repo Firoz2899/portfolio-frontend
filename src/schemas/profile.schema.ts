@@ -1,5 +1,5 @@
 import { LanguageLevel } from "@/constants";
-import { addressSchema } from "./addressSchema";
+import { addressSchema } from "@/schemas";
 import { z } from "zod";
 
 export const languageSchema = z.object({

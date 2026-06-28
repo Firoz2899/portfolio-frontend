@@ -1,4 +1,4 @@
-import type { LanguageType, RoleType } from "@/constants";
+import type { EducationLevel, LanguageType, RoleType } from "@/constants";
 
 export interface IProfile {
   UserUniqueCode: string;
@@ -21,6 +21,7 @@ export interface IProfile {
   createdAt: string;
   updatedAt: string;
   Skills: ISkill[];
+  Educations: IEducation[];
   Experiences: IExperience[];
   Services: IService[];
   Projects: IProject[];
@@ -90,6 +91,21 @@ export interface ISubSkill {
   Percentage: number;
 }
 
+export interface IEducation {
+  UniqueCode?: string;
+  ProfileUniqueCode?: string;
+  EducationLevel: EducationLevel;
+  Institute: string;
+  Degree: string;
+  SpecializationOfStudy?: string;
+  Description?: string;
+  StartDate: string;
+  EndDate?: string | null;
+  Marks?: number | string;
+  Grade?: number | string;
+  Address?: IAddress;
+  Achievements: string[]
+}
 
 export interface IExperience {
   UniqueCode?: string;
@@ -127,6 +143,24 @@ export interface IUser {
   UniqueCode: string;
   createdAt: Date;
   updatedAt: Date | null;
+}
+
+
+
+export interface ITeamMembers {
+    MemberName: string;
+    Designation: string;
+    ImageUrl: string;
+    Experience: number;
+    Bio: string;
+    Skills: string[];
+    Social: {
+        Facebook: string;
+        Twitter: string;
+        LinkedIn: string;
+        Instagram: string;
+        Github: string;
+    }
 }
 
 export type slugValidateRes = {Slug: string; Exists: boolean; IsAvailable: boolean;}

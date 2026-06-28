@@ -3,7 +3,7 @@ import { DATE_FORMATS } from '@/constants';
 import { useThemeMode } from '@/hooks';
 import { executeMutation, experienceApiHooks } from '@/services';
 import type { IExperience } from '@/types/data.types';
-import { formatDate } from '@/utils/basic-helpers';
+import { formatDate } from '@/utils/basic.helpers';
 import { Loader2 } from 'lucide-react';
 import { useState } from 'react';
 import { FaBuilding, FaCalendarAlt, FaEdit, FaGlobe, FaMapMarkerAlt, FaPhone, FaTrash, FaTrophy } from 'react-icons/fa'

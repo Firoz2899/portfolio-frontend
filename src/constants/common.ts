@@ -42,6 +42,17 @@ export const ROLE_HIERARCHY = {
     ],
 };
 
+export const educationLevels = [
+    'High School',
+    "Bachelor's Degree",
+    "Master's Degree",
+    "PhD",
+    "Vocational Training",
+    "Certificate Program"
+] as const;
+
+export type EducationLevel = typeof educationLevels[number];
+
 export const DATE_FORMATS = {
   DATE: "dd/MM/yyyy",
   DATE_US: "MM/dd/yyyy",

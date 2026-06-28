@@ -18,6 +18,20 @@ export const apiUrls = {
         getSkillByCode: "/api/v1/skills/details/:uniqueCode",
         profileSkills: "/api/v1/skills/profile-skills"
     },
+    teamMembers: {
+        createTeamMember: "/api/v1/team-members",
+        updateTeamMember: "/api/v1/team-members/:uniqueCode",
+        deleteTeamMember: "/api/v1/team-members/:uniqueCode",
+        getTeamMemberByCode: "/api/v1/team-members/details/:uniqueCode",
+        profileTeamMember: "/api/v1/team-members/profile-team-members"
+    },
+    educations: {
+        createEducation: "/api/v1/educations",
+        updateEducation: "/api/v1/educations/:uniqueCode",
+        deleteEducation: "/api/v1/educations/:uniqueCode",
+        getEducationByCode: "/api/v1/educations/details/:uniqueCode",
+        profileEducation: "/api/v1/educations/profile-educations"
+    },
     experiences: {
         createExperience: "/api/v1/experiences",
         updateExperience: "/api/v1/experiences/:uniqueCode",

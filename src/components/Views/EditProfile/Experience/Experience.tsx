@@ -8,11 +8,11 @@ import Flatpickr, { type OptionsType } from "react-flatpickr";
 import "flatpickr/dist/flatpickr.min.css";
 import monthSelectPlugin from 'flatpickr/dist/plugins/monthSelect/index';
 import 'flatpickr/dist/plugins/monthSelect/style.css';
-import { useAppSelector, usePrimitiveFieldArray, useThemeMode } from '@/hooks';
+import { useAppSelector, useAutoCompleteCommonStyle, usePrimitiveFieldArray, useThemeMode } from '@/hooks';
 import ExperienceCard from './ExperienceCard';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { experienceSchema, type ExperienceSchemaFormData } from '@/schemas';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, HookFormField, useAlert } from '@/components/Common';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormSubmitBtnLoader, HookFormField, useAlert } from '@/components/Common';
 import { executeMutation, experienceApiHooks } from '@/services';
 import type { IExperience } from '@/types/data.types';
 
@@ -44,6 +44,8 @@ export default function Experience() {
   const { showAlertMessage } = useAlert();
   const [createExperienceApi] = experienceApiHooks.useCreateExperienceMutation()
   const [updateExperienceApi] = experienceApiHooks.useUpdateExperienceMutation()
+  const {autoCompletePaperSX, autoCompleteSX}  = useAutoCompleteCommonStyle()
+  
 
   // Refs for Flatpickr instances
   const startDateRef = useRef(null);
@@ -128,57 +130,6 @@ export default function Experience() {
   const inputIconClassName = "absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400";
   const inputClassName = `w-full px-4 py-2 pl-10 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent ${inputBgClass} ${inputBorderClass} ${textClass}`;
 
-  const autoCompleteSX = {
-    "& .MuiOutlinedInput-root": {
-      borderRadius: "0.5rem",
-      paddingLeft: "2rem",
-      backgroundColor: isDarkMode ? "#374151" : "#ffffff",
-      color: isDarkMode ? "#ffffff" : "#111827",
-
-      "& fieldset": {
-        borderColor: isDarkMode ? "#4b5563" : "#d1d5db",
-      },
-
-      "&:hover fieldset": {
-        borderColor: "#6366f1",
-      },
-
-      "&.Mui-focused fieldset": {
-        borderColor: "#6366f1",
-        borderWidth: "2px",
-      },
-    },
-
-    "& .MuiInputBase-input": {
-      color: isDarkMode ? "#ffffff" : "#111827",
-    },
-
-    "& .MuiSvgIcon-root": {
-      color: isDarkMode ? "#9ca3af" : "#6b7280",
-    },
-  };
-
-  const autoCompletePaperSX = {
-    bgcolor: isDarkMode ? "#374151" : "#ffffff",
-    color: isDarkMode ? "#f3f4f6" : "#111827",
-
-    "& .MuiAutocomplete-option": {
-      color: isDarkMode ? "#f3f4f6" : "#111827",
-    },
-
-    "& .MuiAutocomplete-option:hover": {
-      backgroundColor: isDarkMode ? "#4b5563" : "#f3f4f6",
-    },
-
-    "& .MuiAutocomplete-option[aria-selected='true']": {
-      backgroundColor: isDarkMode ? "#1d4ed8" : "#dbeafe",
-      color: "#fff",
-    },
-
-    "& .MuiAutocomplete-option.Mui-focused": {
-      backgroundColor: isDarkMode ? "#4b5563" : "#e5e7eb",
-    },
-  }
   return (
     <div className={`min-h-screen p-6 ${bgClass}`}>
       <div className="max-w-6xl mx-auto">
@@ -257,19 +208,6 @@ export default function Experience() {
                     </HookFormField>
                   )}
                 />
-                {/* <div>
-                  <label className={`block text-sm font-medium mb-1 ${textSecondaryClass}`}>Country</label>
-                  <div className="relative">
-                    <FaFlag className={inputIconClassName} />
-                    <input
-                      {...register("Country", formValidation("Country"))}
-                      className={`w-full px-4 py-2 pl-10 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent ${inputBgClass} ${inputBorderClass} ${textClass}`}
-                      placeholder="Country"
-                    />
-                  </div>
-                  {errors.Country && <p style={{ color: "red", width: "100%" }}>{errors.Country.message}</p>}
-                </div> */}
-                
                 <FormField
                   control={control}
                   name='Address.State'
@@ -313,18 +251,6 @@ export default function Experience() {
                     </HookFormField>
                   )}
                 />
-                {/* <div>
-                  <label className={`block text-sm font-medium mb-1 ${textSecondaryClass}`}>State</label>
-                  <div className="relative">
-                    <FaMapMarkerAlt className={inputIconClassName} />
-                    <input
-                      {...register("State", formValidation("State"))}
-                      className={`w-full px-4 py-2 pl-10 border rounded-lg focus:ring-2 focus:ring-teal-500 focus:border-transparent ${inputBgClass} ${inputBorderClass} ${textClass}`}
-                      placeholder="State"
-                    />
-                  </div>
-                  {errors.State && <p style={{ color: "red", width: "100%" }}>{errors.State.message}</p>}
-                </div> */}
                 <FormField 
                   control={control}
                   name='Address.City'
@@ -534,10 +460,7 @@ export default function Experience() {
                 >
                   {formState.isSubmitting ? (
                     <>
-                      <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                      </svg>
+                      <FormSubmitBtnLoader/>
                       Saving...
                     </>
                   ) : (
