@@ -116,7 +116,10 @@ export const navigationItems: INavigationItem[] = [
       description: 'Team members',
       color: 'from-lime-400 to-green-500',
       accent: 'lime',
-      natureIcon: <FaBug />
+      natureIcon: <FaBug />,
+      component: loadable(_ => import("@/components/Views/EditProfile/Team/MyTeam"), {
+        fallback: <EditSkillSectionLoader/>
+      })
     },
     {
       id: 'blog',

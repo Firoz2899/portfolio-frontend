@@ -23,6 +23,7 @@ export interface IProfile {
   Skills: ISkill[];
   Educations: IEducation[];
   Experiences: IExperience[];
+  Teams: ITeam[];
   Services: IService[];
   Projects: IProject[];
   Contacts: IContact[];
@@ -119,6 +120,26 @@ export interface IExperience {
   EndDate?: string | null;
   Description?: string;
   Achievements: string[];
+}
+
+export interface ITeam {
+  UniqueCode?: string;
+  ProfileUniqueCode?: string;
+  MemberName: string;
+  Position: string;
+  Image?: IMedia;
+  Experience?: number;
+  Bio?: string;
+  Skills: string[];
+  Social?: ITeamSocial;
+}
+
+export interface ITeamSocial {
+  Facebook?: string;
+  Twitter?: string;
+  LinkedIn?: string;
+  Instagram?: string;
+  Github?: string;
 }
 
 export interface IService {

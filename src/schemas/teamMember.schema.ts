@@ -6,7 +6,8 @@ const socialSchema = z.object({
   Twitter: optionalUrl,
   LinkedIn: optionalUrl,
   Instagram: optionalUrl,
-  Github: optionalUrl
+  Github: optionalUrl,
+  Dribbble: optionalUrl,
 });
 
 export const teamMemberSchema = z.object({
@@ -18,10 +19,10 @@ export const teamMemberSchema = z.object({
     .trim()
     .min(1, "Member name is required"),
 
-  Designation: z
+  Position: z
     .string()
     .trim()
-    .min(1, "Designation is required"),
+    .min(1, "Position is required"),
 
   Image: z.any().optional(),
 
@@ -43,4 +44,5 @@ export const teamMemberSchema = z.object({
   Social: socialSchema
 });
 
-export type TeamMemberSchemaFormData = z.infer<typeof teamMemberSchema>;
+export type TeamMemberSchemaFormDataInput = z.input<typeof teamMemberSchema>;
+export type TeamMemberSchemaFormDataOutput = z.output<typeof teamMemberSchema>;
